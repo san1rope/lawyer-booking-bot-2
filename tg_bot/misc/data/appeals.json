@@ -1,0 +1,31 @@
+﻿{
+    "last_id": 3,
+    "5791823682": [
+        {
+            "id": 1,
+            "username": "company_in_phone",
+            "full_name": "компанія в смартфоні",
+            "text": "Привіт",
+            "file_id": null,
+            "file_type": null
+        },
+        {
+            "id": 3,
+            "username": "company_in_phone",
+            "full_name": "компанія в смартфоні",
+            "text": "Контакты",
+            "file_id": null,
+            "file_type": null
+        }
+    ],
+    "1643710214": [
+        {
+            "id": 2,
+            "username": "san1rope",
+            "full_name": "san1rope",
+            "text": "текст ...........",
+            "file_id": "AgACAgIAAxkBAAICSmWdrmLXuSwjCE18wh9gBPQ9F8YJAALA3jEb3kvxSICrljbQVbJ0AQADAgADcwADNAQ",
+            "file_type": "photo"
+        }
+    ]
+}
