@@ -30,7 +30,7 @@ async def write_user_id(callback: types.CallbackQuery, callback_data: dict):
 
     uid = callback.from_user.id
 
-    msg = await callback.message.edit_text("<b>Введіть ID користувача</b>", reply_markup=markup)
+    msg = await callback.message.edit_text("<b>Введите ID пользователя</b>", reply_markup=markup)
     temp_calldata[callback.from_user.id] = callback_data
     temp_msgid_state[uid] = msg.message_id
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
@@ -74,7 +74,7 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
     await message.delete()
 
     if ("weekend" not in msg_text) and (not msg_text.isdigit()):
-        msg_wrong_format = await message.answer("<b>ID може містити тільки цифри</b>", reply_markup=markup)
+        msg_wrong_format = await message.answer("<b>ID может иметь только цифры</b>", reply_markup=markup)
         temp_msgid_state[uid] = msg_wrong_format.message_id
         add_msg_to_delete(user_id=uid, msg_id=msg_wrong_format.message_id)
         return
@@ -83,7 +83,7 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
     if name == "record":
         if msg_text not in all_records:
             msg_wrong_id = await message.answer(
-                "<b>Користувача з таким ID не існує або у нього немає активних записів</b>", reply_markup=markup)
+                "<b>Нет пользователя с таким ID или у него нет активных записей.</b>", reply_markup=markup)
             temp_msgid_state[uid] = msg_wrong_id.message_id
             add_msg_to_delete(user_id=uid, msg_id=msg_wrong_id.message_id)
             return
@@ -104,25 +104,25 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
             add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
     elif name == "ban_user":
         if msg_text in black_list:
-            msg_wrong_id = await message.answer("<b>Даний користувач вже заблокований</b>", reply_markup=markup)
+            msg_wrong_id = await message.answer("<b>Данный пользователь уже заблокован.</b>", reply_markup=markup)
             temp_msgid_state[uid] = msg_wrong_id.message_id
             add_msg_to_delete(user_id=uid, msg_id=msg_wrong_id.message_id)
             return
 
         dt = datetime.now(Config.TIMEZONE)
-        msg = await message.answer(f"<b>Ви дійсно хочете заблокувати користувача з \nID: {msg_text}?</b>",
+        msg = await message.answer(f"<b>Вы хотите заблокировать пользователя с \nID: {msg_text}?</b>",
                                    reply_markup=remove_inline(
-                                       f"banuser_{msg_text}_{dt.date()}_{dt.hour}-{dt.minute}", "Заблокувати"))
+                                       f"banuser_{msg_text}_{dt.date()}_{dt.hour}-{dt.minute}", "Заблокировать"))
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
     elif name == "unban_user":
         if msg_text not in black_list:
-            msg_wrong_id = await message.answer("<b>Даний користувач не заблокований</b>", reply_markup=markup)
+            msg_wrong_id = await message.answer("<b>Данный пользоваетль не заблокован.</b>", reply_markup=markup)
             temp_msgid_state[uid] = msg_wrong_id.message_id
             add_msg_to_delete(user_id=uid, msg_id=msg_wrong_id.message_id)
             return
 
-        msg = await message.answer(f"<b>Ви дійсно хочете розблокувати користувача з \nID: {msg_text}?</b>",
-                                   reply_markup=remove_inline(f"unbanuser_{msg_text}_none", "Розблокувати"))
+        msg = await message.answer(f"<b>Вы хотите разблокировать пользователя с \nID: {msg_text}?</b>",
+                                   reply_markup=remove_inline(f"unbanuser_{msg_text}_none", "Разблокировать"))
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
     await state.finish()
