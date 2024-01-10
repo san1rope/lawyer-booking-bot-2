@@ -37,7 +37,7 @@ async def cmd_panel(message: types.Message | types.CallbackQuery):
         "<b>Вы вошли в админ панель</b>",
         f"<b>Активных записей: {hcode(str(records_count))}</b>",
         f"<b>Активных обращений: {hcode(str(appeals_count))}</b>",
-        "\n<b>Виберіть одну з функцій</b>"
+        "\n<b>Выберите одну из функций</b>"
     ]
     msg = await message.answer('\n\n'.join(text), reply_markup=panel_inline)
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
