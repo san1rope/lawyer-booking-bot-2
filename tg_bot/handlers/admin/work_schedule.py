@@ -32,7 +32,7 @@ async def show_calendar(callback: types.CallbackQuery):
             pass
 
     today = datetime.now(Config.TIMEZONE)
-    msg = await callback.message.edit_text(text="<b>Графік роботи</b>",
+    msg = await callback.message.edit_text(text="<b>График работы</b>",
                                            reply_markup=work_schedule_calendar(today.year, today.month, today.day))
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
@@ -56,7 +56,7 @@ async def selected_date(callback: types.CallbackQuery, callback_data: dict):
         return
     elif arg1 == "day":
         temp_calldata[uid] = callback_data
-        await callback.message.edit_text(text="<b>Виберіть час для взаємодії</b>",
+        await callback.message.edit_text(text="<b>Выберите время для взаимодейтвия</b>",
                                          reply_markup=work_schedule_time(int(arg4), int(arg3), int(arg2)))
         return
     elif arg1 == "move":
@@ -116,14 +116,14 @@ async def selected_time(callback: types.CallbackQuery, callback_data: dict):
             "name": current_record.get("name")
         }
 
-        text = form_completion(f"Запис {record_number} користувача з \nID: {uid}", record_data=temp_record)
+        text = form_completion(f"Запись {record_number} пользователя с \nID: {uid}", record_data=temp_record)
         return await callback.message.edit_text(text=text, reply_markup=back_inline("back_from_record"))
 
     if hour == "all_day":
-        return await callback.message.edit_text("<b>Ви дійсно хочете зайняти повний день?</b>",
+        return await callback.message.edit_text("<b>Вы хотите занять день полностью?</b>",
                                                 reply_markup=confirm_weekend("all_day"))
 
-    await callback.message.edit_text("<b>Ви дійсно хочете зайняти цей час для інших справ?</b>",
+    await callback.message.edit_text("<b>Вы хотите занять это время?</b>",
                                      reply_markup=confirm_weekend(f"{hour}_{minute}"))
 
 
@@ -157,7 +157,7 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
     else:
         time = name.split('_')
         record = {
-            "service": "Вихідний",
+            "service": "Выходной",
             "date": f"{day}.{month}.{year}",
             "time": f"{time[0]}:{time[1]}",
             "number": "admin",
@@ -188,9 +188,9 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
                 timeline[time_str].update({year: {month: {day: "weekend"}}})
 
             time_start += timedelta(minutes=30)
-        temp_text = "час"
+        temp_text = "время"
 
-    await callback.message.edit_text(f"<b>Ви успішно зайняли цей {temp_text}</b>", reply_markup=back_to_time_selection)
+    await callback.message.edit_text(f"<b>Вы успешно заняли этот {temp_text}</b>", reply_markup=back_to_time_selection)
 
 
 async def back_from_schedule(callback: types.CallbackQuery):
