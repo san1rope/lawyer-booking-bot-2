@@ -20,7 +20,7 @@ async def remove_data(callback: types.CallbackQuery, callback_data: dict):
 
     name = callback_data.get("name")
     if name == "disagree":
-        await callback.message.edit_text("<b>Ви відмовились від дії</b>")
+        await callback.message.edit_text("<b>Вы отказались от действия.</b>")
         return
 
     name_ = name.split('_')
@@ -30,16 +30,16 @@ async def remove_data(callback: types.CallbackQuery, callback_data: dict):
 
     if name_[0] == "banuser":
         black_list[user_id] = f"{name_[2]}_{name_[3]}"
-        temp = "блокування користувача"
+        temp = "блокировка пользователя"
     elif name_[0] == "unbanuser":
         black_list.pop(user_id)
-        temp = "розблокування користувача"
+        temp = "разблокировка пользователя"
 
     if name_[0] == "record":
         remove_record(user_id, data_number)
-        temp = "видалення запису"
+        temp = "удаление записи"
 
-    await callback.message.edit_text(f"<b>Ви підтвердили {temp}</b>")
+    await callback.message.edit_text(f"<b>Вы подтвердили {temp}</b>")
 
 
 def register_remove_data(dp: Dispatcher):
