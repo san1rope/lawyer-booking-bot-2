@@ -10,23 +10,23 @@ from tg_bot.misc.data_handling import timeline, all_records, amount_time_per_ser
 panel_inline = InlineKeyboardMarkup(row_width=2,
                                     inline_keyboard=[
                                         [
-                                            InlineKeyboardButton(text="Графік", callback_data="work_schedule")
+                                            InlineKeyboardButton(text="График", callback_data="work_schedule")
                                         ],
                                         [
-                                            InlineKeyboardButton(text="Знайти запис",
+                                            InlineKeyboardButton(text="Найти запись",
                                                                  callback_data=tc.new(title="act_on_users",
                                                                                       name="record"))
                                         ],
                                         [
-                                            InlineKeyboardButton(text="Заблокувати",
+                                            InlineKeyboardButton(text="Заблокировать",
                                                                  callback_data=tc.new(title="act_on_users",
                                                                                       name="ban_user")),
-                                            InlineKeyboardButton(text="Розблокувати",
+                                            InlineKeyboardButton(text="Разблокировать",
                                                                  callback_data=tc.new(title="act_on_users",
                                                                                       name="unban_user"))
                                         ],
                                         [
-                                            InlineKeyboardButton(text="Чорний список", callback_data="black_list"),
+                                            InlineKeyboardButton(text="Чорный список", callback_data="black_list"),
                                             InlineKeyboardButton(text="Обращения", callback_data="appeals")
                                         ]
                                     ])
@@ -124,8 +124,8 @@ def work_schedule_calendar(year: int, month: int, day_: int) -> InlineKeyboardMa
                                                            arg4=year))
         keyboard.insert(button)
 
-    all_months = {1: "Січень", 2: "Лютий", 3: "Березень", 4: "Квітень", 5: "Травень", 6: "Червень", 7: "Липень",
-                  8: "Серпень", 9: "Вересень", 10: "Жовтень", 11: "Листопад", 12: "Грудень"}
+    all_months = {1: "Январь", 2: "Февраль", 3: "Март", 4: "Апрель", 5: "Май", 6: "Июнь", 7: "Июль",
+                  8: "Август", 9: "Сентябрь", 10: "Октябрь", 11: "Ноябрь", 12: "Декабрь"}
 
     left = InlineKeyboardButton(text="<",
                                 callback_data=cc.new(title="adm_calendar", arg1="move", arg2="left", arg3="none",
@@ -214,7 +214,7 @@ def confirm_weekend(calldata: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(row_width=2,
                                     inline_keyboard=[
                                         [
-                                            InlineKeyboardButton(text="Підтверджую",
+                                            InlineKeyboardButton(text="Подтверждаю",
                                                                  callback_data=tc.new(title="make_weekend",
                                                                                       name=calldata)),
                                             InlineKeyboardButton(text="Назад",
@@ -226,7 +226,7 @@ def confirm_weekend(calldata: str) -> InlineKeyboardMarkup:
 
 
 back_to_time_selection = InlineKeyboardMarkup(row_width=1, inline_keyboard=[
-    [InlineKeyboardButton(text="Повернутись до часу", callback_data="back_to_time_selection")]])
+    [InlineKeyboardButton(text="Вернуться к времени", callback_data="back_to_time_selection")]])
 
 
 def appeals_inline(continue_: bool = False, delete: bool = False) -> InlineKeyboardMarkup:
