@@ -6,7 +6,7 @@ payment_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
         [
-            KeyboardButton(text="Перейти до сплати",
+            KeyboardButton(text="Перейти к оплате",
                            web_app=WebAppInfo(url=Config.PAYMENT_URL))
         ]
     ]
