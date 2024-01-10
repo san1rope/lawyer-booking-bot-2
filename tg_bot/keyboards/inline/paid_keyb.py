@@ -6,7 +6,7 @@ paid_keyboard = InlineKeyboardMarkup(
     row_width=1,
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Я оплати(в/ла)",
+            InlineKeyboardButton(text="Я оплати(л/ла)",
                                  callback_data=tc.new(title="service_paid", name="confirm"))
         ],
         [
