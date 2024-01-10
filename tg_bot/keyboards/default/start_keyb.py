@@ -2,7 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from tg_bot.config import Config
 
-title_start_recording = "Записатися на консультацію"
+title_start_recording = "Записаться на консультацию"
 title_contacts = "Контакты"
 title_common_questions = "Частые вопросы"
 title_records = "Записи"
@@ -28,7 +28,7 @@ def start_keyboard(user_id: int) -> ReplyKeyboardMarkup:
     )
 
     if user_id in Config.ADMINS:
-        button = KeyboardButton("Адмін панель")
+        button = KeyboardButton("Меню администратора")
         markup.row(button)
 
     return markup
