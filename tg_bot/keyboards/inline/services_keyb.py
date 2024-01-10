@@ -6,10 +6,10 @@ services_keyboard = InlineKeyboardMarkup(
     row_width=2,
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Онлайн консультація",
+            InlineKeyboardButton(text="Онлайн консультация",
                                  callback_data=tc.new(title="service",
                                                       name="online_consultation")),
-            InlineKeyboardButton(text="Консультація в офісі",
+            InlineKeyboardButton(text="Консультация в офисе",
                                  callback_data=tc.new(title="service",
                                                       name="office_consultation"))
         ],
