@@ -46,7 +46,7 @@ async def record_monitor(first_start: bool = False):
                                                 "name": current_record.get("name")
                                             }
                                             text = form_completion(
-                                                "Підійшов час, на який ви записувась\nЗапис буде видалено автоматично",
+                                                "Подошло время вашей записи.\nЗапись будет удалена автоматически.",
                                                 record_data=temp_record
                                             )
 
@@ -87,7 +87,7 @@ async def record_monitor(first_start: bool = False):
 
                                             temp = str(record_time_delta - current_time_delta).split(':')
                                             text = form_completion(
-                                                f"Через {temp[0]}:{temp[1]} вам потрібно прийти по запису",
+                                                f"Через {temp[0]}:{temp[1]} у вас консультация.",
                                                 record_data=temp_record
                                             )
 
