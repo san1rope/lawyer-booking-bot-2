@@ -13,7 +13,7 @@ async def show_records(message: types.Message):
     await delete_messages(uid)
 
     if str(uid) not in all_records:
-        await message.answer("<b>У вас немає активних записів</b>")
+        await message.answer("<b>У вас нет активных записей 🤷🏻‍♂️</b>")
         return
 
     for i in all_records[str(uid)]:
@@ -27,8 +27,8 @@ async def show_records(message: types.Message):
             "name": current_record.get("name")
         }
 
-        text = form_completion(f"Запис {i}", record_data=temp_record)
-        msg = await message.answer(text=text, reply_markup=remove_inline(f"record_{uid}_{i}", "Видалити"))
+        text = form_completion(f"Запись {i}", record_data=temp_record)
+        msg = await message.answer(text=text, reply_markup=remove_inline(f"record_{uid}_{i}", "Удалить"))
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
 
