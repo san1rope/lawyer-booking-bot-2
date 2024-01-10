@@ -187,7 +187,8 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
             else:
                 timeline[time_str].update({year: {month: {day: "weekend"}}})
 
-            time_start += timedelta(minutes=30)
+            time_start += timedelta(hours=1)
+
         temp_text = "время"
 
     await callback.message.edit_text(f"<b>Вы успешно заняли этот {temp_text}</b>", reply_markup=back_to_time_selection)

@@ -438,7 +438,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
         else:
             timeline[time_str].update({year: {month: {day: str(uid)}}})
 
-        time_timedelta += timedelta(minutes=30)
+        time_timedelta += timedelta(hours=1)
 
     if str(uid) not in reminder:
         reminder[str(uid)] = {str(len(all_records[str(uid)])): temp_records[uid].get("time")}
