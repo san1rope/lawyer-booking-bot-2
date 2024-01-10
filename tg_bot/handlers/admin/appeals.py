@@ -28,7 +28,7 @@ async def show_appeals(callback: types.CallbackQuery):
         current_uid = list(appeals.keys())[1]
     except Exception:
         await delete_messages(callback.from_user.id)
-        msg = await callback.message.answer("<b>На данный момент активных обращений нету!</b>",
+        msg = await callback.message.answer("<b>На данный момент активных обращений нет!</b>",
                                             reply_markup=panel_inline)
         add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
         return
@@ -63,7 +63,7 @@ async def show_appeals(callback: types.CallbackQuery):
             msg = await callback.message.answer_document(document=appeal_file_id, caption='\n'.join(text),
                                                          reply_markup=markup)
         else:
-            await callback.message.answer(text="<b>Неверный тип сообщения!\nПопробуйте ещё раз</b>")
+            await callback.message.answer(text="<b>Неверный тип сообщения!\nПопробуйте ещё раз.</b>")
             return
     else:
         msg = await callback.message.answer(text='\n'.join(text), reply_markup=markup)
