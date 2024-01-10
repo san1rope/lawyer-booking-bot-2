@@ -11,11 +11,11 @@ from tg_bot.misc.data_handling import black_list
 async def show_black_list(callback: types.CallbackQuery):
     await callback.answer()
 
-    text = ["<b>Список заблокованих користувачів</b>\n"]
+    text = ["<b>Список заблокованных пользователей</b>\n"]
     for uid in black_list:
         date = black_list[uid].split('_')
         time = date[1].split('-')
-        temp = f"ID: {hcode(uid)} | Дата блокування: {date[0]}  {time[0]}:{time[1]}"
+        temp = f"ID: {hcode(uid)} | Дата блокировки: {date[0]}  {time[0]}:{time[1]}"
         text.append(temp)
 
     await callback.message.edit_text('\n'.join(text), reply_markup=back_inline("back_from_black_list"))
