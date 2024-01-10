@@ -21,7 +21,7 @@ async def show_user_appeals(message: types.Message):
 
     user_appeals = appeals.get(str(message.from_user.id))
     if not user_appeals:
-        return await message.answer("<b>У вас нету активных обращений!</b>")
+        return await message.answer("<b>У вас нет активных обращений!</b>")
 
     for appeal in user_appeals:
         text = [
