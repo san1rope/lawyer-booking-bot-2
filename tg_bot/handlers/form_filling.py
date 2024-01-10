@@ -48,13 +48,13 @@ async def start_filling(message: Union[types.Message, types.CallbackQuery], edit
 
     if (str(uid) in all_records) and (len(all_records[str(uid)]) >= Config.MAX_RECORDS_PER_USER):
         await message.answer(
-            text=f"<b>Не вдалося розпочати запис\nВи вже маєте записів: {Config.MAX_RECORDS_PER_USER}</b>")
+            text=f"<b>Не удалось начать запись\nВы уже имеете записей: {Config.MAX_RECORDS_PER_USER}</b>")
         return
 
     if uid in temp_records:
         temp_records.pop(uid)
 
-    text = form_completion(f"{text}Ознайомтеся з прайсом, оберіть формат консультації, дату та час 👇")
+    text = form_completion(f"{text}Ознакомьтесь с прайсом, выберите формат консультации, дату и время 👇")
 
     if edit_message:
         try:
@@ -84,8 +84,10 @@ async def choose_service(callback: types.CallbackQuery, callback_data: dict, msg
                 return await start_filling(message=callback.message, edit_message=True, text=text)
 
             text = [
-                "<b>Пришли свое обращение к администратору одним сообщением</b>",
-                "<b>Можно присылать документы и медиа файлы</b>"
+                "<b>Письменная консультация в формате word 📝</b>",
+                "<b>Пришлите свое обращение к администратору одним сообщением</b>",
+                "<b>Можно присылать документы 📎 и медиа файлы 📷</b>"
+                "<b>Информация и документы подаются за день до онлайн/офлайн консультации.</b>" 
             ]
             msg = await callback.message.edit_text(text='\n'.join(text), reply_markup=back_keyboard)
             add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
@@ -99,7 +101,7 @@ async def choose_service(callback: types.CallbackQuery, callback_data: dict, msg
         temp_records[uid] = {"service": services.get(name)}
 
         if name == "online_consultation":
-            text = form_completion(title="Оберіть месенджер", record_data=temp_records.get(uid))
+            text = form_completion(title="Выберите мессенджер", record_data=temp_records.get(uid))
             return await callback.message.edit_text(text=text, reply_markup=messengers_keyboard)
 
     today = datetime.now(Config.TIMEZONE)
@@ -153,7 +155,7 @@ async def send_appeal(message: Union[types.Message, types.CallbackQuery], state:
     appeals["last_id"] += 1
 
     await delete_messages(uid)
-    await message.answer(f"<b>Вы добавили новое обращение №{new_appeal['id']}\nОжидайте ответа администратора</b>",
+    await message.answer(f"<b>Вы добавили новое обращение №{new_appeal['id']}\nОжидайте ответа администратора.</b>",
                          reply_markup=start_keyboard(message.from_user.id))
 
     for admin_id in Config.ADMINS:
@@ -199,13 +201,13 @@ async def choose_date(callback: types.CallbackQuery, callback_data: dict, msg_te
 
         if record_counter == len(timeline):
             temp_records[uid].pop("date", None)
-            text = "Не знайшли вільного часу на цей день\nОберіть дату"
+            text = "Нет свободного времени в этот день.\nВыберите другую дату."
             return await choose_service(callback, callback_data=temp_callback_data[uid]["service"], msg_text=text)
 
         temp_records[uid]["date"] = f"{day}.{month}.{year}"
 
         service = temp_records[uid]["service"]
-        text = form_completion(title=(msg_text if msg_text else "Оберіть час"), record_data=temp_records.get(uid))
+        text = form_completion(title=(msg_text if msg_text else "Выберите время 🕒"), record_data=temp_records.get(uid))
         return await callback.message.edit_text(text=text, reply_markup=time_keyboard(
             year=year, month=month, day=day, service=service))
 
@@ -275,7 +277,7 @@ async def choose_time(callback: types.CallbackQuery, callback_data: dict):
 
     temp_records[uid]["time"] = time_
 
-    msg = await callback.message.edit_text(text="Введіть контактний номер телефону\nПриклад: 0971826259",
+    msg = await callback.message.edit_text(text="Введите контактный номер телефона.\nПример: 0971826259",
                                            reply_markup=back_keyboard)
 
     msg_state_id[uid] = msg.message_id
@@ -316,14 +318,14 @@ async def write_number(message: Union[types.Message, types.CallbackQuery], state
             return await show_questions(message)
 
     if not number.isdigit() or len(number) != 10:
-        msg_wrong_number = await message.answer("Неправильний формат номера телефону\nПриклад: 0971826259",
+        msg_wrong_number = await message.answer("Неправильный формат номера телефона\nПример: 0971826259",
                                                 reply_markup=back_keyboard)
         msg_state_id[uid] = msg_wrong_number.message_id
         return
 
     await state.update_data(number=number)
 
-    msg = await message.answer("Введіть своє ім'я", reply_markup=back_keyboard)
+    msg = await message.answer("Введите свое имя", reply_markup=back_keyboard)
     msg_state_id[uid] = msg.message_id
 
     await ProvideContacts.Name.set()
@@ -363,7 +365,7 @@ async def write_name(message: Union[types.Message, types.CallbackQuery], state: 
 
     for i in name:
         if i.isdigit():
-            msg_wrong_name = await message.answer("Ім'я не повинно містити цифр, спробуйте ще раз!")
+            msg_wrong_name = await message.answer("Имя не должно содержать цифр, попробуйте еще раз!")
             msg_state_id[uid] = msg_wrong_name.message_id
             return
 
@@ -372,13 +374,13 @@ async def write_name(message: Union[types.Message, types.CallbackQuery], state: 
     temp_records[uid]["number"] = number
     temp_records[uid]["name"] = name
 
-    text = form_completion("Ваш запис", record_data=temp_records.get(uid))
-    text += f"\n\n<b>До сплати {hcode(service_prices.get(temp_records[uid]['service']))} грн.</b>"
+    text = form_completion("Ваша запись", record_data=temp_records.get(uid))
+    text += f"\n\n<b>К оплате {hcode(service_prices.get(temp_records[uid]['service']))} грн.</b>"
     msg = await message.answer(text=text, reply_markup=payment_keyboard)
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
     sub_msg_id[uid] = msg.message_id
 
-    text = "<b>Щоб перейти до сплати, \nнатисніть кнопку - Перейти до сплати</b>"
+    text = "<b>Чтобы оплатить консультацию, \nнажмите кнопку - Перейти к оплате</b>"
     msg = await message.answer(text=text, reply_markup=paid_keyboard)
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
@@ -404,7 +406,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
         all_records[str(uid)] = {"1": temp_records[uid]}
     elif len(all_records[str(uid)]) >= Config.MAX_RECORDS_PER_USER:
         await callback.message.edit_text(
-            text=f"<b>Запис не збережено!\nВи вже маєте активніх записів: {Config.MAX_RECORDS_PER_USER}</b>")
+            text=f"<b>Запись не сохранена!\nУ вас уже есть активных записей: {Config.MAX_RECORDS_PER_USER}</b>")
         return
     else:
         all_records[str(uid)].update({str(len(all_records[str(uid)]) + 1): temp_records[uid]})
@@ -443,7 +445,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
     else:
         reminder[str(uid)].update({str(len(all_records[str(uid)])): temp_records[uid].get("time")})
 
-    text = form_completion("Добавлено новий запис", record_data=temp_records.get(uid))
+    text = form_completion("Добавлено новую запись❗", record_data=temp_records.get(uid))
     for adm in Config.ADMINS:
         if adm != uid:
             try:
@@ -452,7 +454,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
                 continue
 
     await callback.message.delete()
-    text = form_completion("Запис збережено", record_data=temp_records.get(uid))
+    text = form_completion("Запись сохрнена ✔️", record_data=temp_records.get(uid))
     await callback.message.answer(text=text, reply_markup=start_keyboard(uid))
 
 
