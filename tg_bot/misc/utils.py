@@ -20,11 +20,11 @@ def form_completion(title: str, record_data: Optional[dict] = None) -> str:
 
     text = [
         f"<b>{title}</b>",
-        f"{hcode('Послуга:')} {service if service else ''}",
+        f"{hcode('Услуга:')} {service if service else ''}",
         f"{hcode('Дата:')} {date if date else ''}",
-        f"{hcode('Час:')} {time if time else ''}",
+        f"{hcode('Время:')} {time if time else ''}",
         f"{hcode('Телефон:')} {number if number else ''}",
-        hcode('Ім\'я: ') + str(name if name else '')
+        hcode('Имя: ') + str(name if name else '')
     ]
     if record_data and record_data.get("messenger"):
         text.insert(2, f"{hcode('Месенджер:')} {record_data.get('messenger')}")
