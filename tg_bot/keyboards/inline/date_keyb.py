@@ -35,7 +35,7 @@ def calendar_keyboard(year: int, month: int, day_: int):
                                                                  callback_data=cc.new(title="calendar", arg1="weekday",
                                                                                       arg2="unclick", arg3="none",
                                                                                       arg4="none")),
-                                            InlineKeyboardButton(text="Нд",
+                                            InlineKeyboardButton(text="Вс",
                                                                  callback_data=cc.new(title="calendar", arg1="weekday",
                                                                                       arg2="unclick", arg3="none",
                                                                                       arg4="none"))
@@ -82,8 +82,8 @@ def calendar_keyboard(year: int, month: int, day_: int):
                                                            arg4=year))
         keyboard.insert(button)
 
-    all_months = {1: "Січень", 2: "Лютий", 3: "Березень", 4: "Квітень", 5: "Травень", 6: "Червень", 7: "Липень",
-                  8: "Серпень", 9: "Вересень", 10: "Жовтень", 11: "Листопад", 12: "Грудень"}
+    all_months = {1: "Январь", 2: "Февраль", 3: "Март", 4: "Апрель", 5: "Май", 6: "Июнь", 7: "Июль",
+                  8: "Август", 9: "Сентябрь", 10: "Октябрь", 11: "Ноябрь", 12: "Декабрь"}
 
     left = InlineKeyboardButton(text="<", callback_data=cc.new(title="calendar", arg1="move", arg2="left", arg3="none",
                                                                arg4="none"))
