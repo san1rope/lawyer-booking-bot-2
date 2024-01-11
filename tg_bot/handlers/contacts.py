@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 async def show_contacts(message: types.Message):
     logger.info(f"Handler called. {show_contacts.__name__}. user_id={message.from_user.id}")
 
-    await message.answer(text="<bПосетите страницы в соцсетях ⬇️</b>", reply_markup=contacts_keyboard)
+    await message.answer(text="<b>Посетите страницы в соцсетях ⬇️</b>", reply_markup=contacts_keyboard)
 
 
 async def show_phone_number(callback: types.CallbackQuery):
