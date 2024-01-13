@@ -170,7 +170,7 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
             all_records["weekend"].update({str(len(all_records["weekend"]) + 1): record})
 
         time_start = timedelta(hours=int(time[0]), minutes=int(time[1]))
-        amount_time = amount_time_per_service["Вихідний"].split(':')
+        amount_time = amount_time_per_service["Выходной"].split(':')
         will_take_time_ = timedelta(hours=int(amount_time[0]), minutes=int(amount_time[1]))
         time_end = time_start + will_take_time_
         while time_start != time_end:
