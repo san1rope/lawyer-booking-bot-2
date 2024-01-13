@@ -70,7 +70,7 @@ def work_schedule_calendar(year: int, month: int, day_: int) -> InlineKeyboardMa
                                                                                       arg1="weekday",
                                                                                       arg2="unclick", arg3="none",
                                                                                       arg4="none")),
-                                            InlineKeyboardButton(text="Нд",
+                                            InlineKeyboardButton(text="Вс",
                                                                  callback_data=cc.new(title="adm_calendar",
                                                                                       arg1="weekday",
                                                                                       arg2="unclick", arg3="none",
@@ -200,7 +200,7 @@ def work_schedule_time(year: int, month: int, day: int) -> InlineKeyboardMarkup:
         keyboard.insert(button)
 
     if counter >= len(timeline):
-        take_all_day = InlineKeyboardButton(text="Зайняти весь день",
+        take_all_day = InlineKeyboardButton(text="Занять весь день",
                                             callback_data=tcb.new(title="adm_time", hour="all_day", minute="all_day"))
         keyboard.row(take_all_day)
 
