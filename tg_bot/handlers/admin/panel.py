@@ -45,4 +45,4 @@ async def cmd_panel(message: types.Message | types.CallbackQuery):
 
 def register_panel(dp: Dispatcher):
     dp.register_message_handler(cmd_panel, ChatTypeFilter(types.ChatType.PRIVATE), IsAdmin(),
-                                Text("Адмін панель") | Command('apanel'))
+                                Text("Меню администратора") | Command('apanel'))
