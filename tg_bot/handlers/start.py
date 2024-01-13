@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 async def cmd_start(message: types.Message):
     logger.info(f"Handler called. {cmd_start.__name__}. user_id={message.from_user.id}")
 
-    text = "\n<b>В меню вы можете ознакомиться с ответами на частые вопросы и записаться на консультацию. Воспользуйтесь клавіатурой   ⬇️</b>"
+    text = "\n<b>В меню вы можете ознакомиться с ответами на частые вопросы и записаться на консультацию. Воспользуйтесь клавиатурой   ⬇️</b>"
     await message.answer(text=text, reply_markup=start_keyboard(message.from_user.id))
 
 
