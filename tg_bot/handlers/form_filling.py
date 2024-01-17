@@ -452,7 +452,8 @@ async def payment_record(message: Union[types.CallbackQuery, types.Message], cal
         await delete_messages(uid)
 
         end = f"\n\n<b>К оплате {hcode(service_prices.get(temp_records[uid]['service']))} грн.</b>"
-        msg = await send_record(title="Ваша запись", end=end, record=temp_records.get(uid), uid=uid)
+        msg = await send_record(title="Ваша запись", end=end, record=temp_records.get(uid), uid=uid,
+                                reply_markup=payment_keyboard)
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
         sub_msg_id[uid] = msg.message_id
 
@@ -563,12 +564,13 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
     for adm in Config.ADMINS:
         if adm != uid:
             try:
-                await send_record(title="Добавлено новую запись!", uid=str(uid), record=temp_records.get(uid))
+                await send_record(title="Добавлено новую запись!", uid=str(adm), record=temp_records.get(uid))
             except (ChatNotFound, BotBlocked):
                 continue
 
     await callback.message.delete()
-    await send_record(title="Запись сохранена ✔", record=temp_records.get(uid), uid=str(uid))
+    await send_record(title="Запись сохранена ✔", record=temp_records.get(uid), uid=str(uid),
+                      reply_markup=start_keyboard(uid))
 
 
 def register_form_filling(dp: Dispatcher):
