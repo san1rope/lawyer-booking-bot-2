@@ -16,7 +16,7 @@ from tg_bot.handlers.records import show_records
 from tg_bot.keyboards.inline.callback_data import temp_callback as tc
 from tg_bot.keyboards.inline.remove_keyb import remove_inline
 from tg_bot.misc.data_handling import all_records, black_list
-from tg_bot.misc.utils import form_completion, add_msg_to_delete
+from tg_bot.misc.utils import add_msg_to_delete, send_record
 from tg_bot.misc.states import FindData
 
 temp_calldata, temp_msgid_state = {}, {}
@@ -90,17 +90,7 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
 
         for i in all_records[str(msg_text)]:
             current_record = all_records[str(msg_text)][i]
-            temp_record = {
-                "service": current_record.get("service"),
-                "messenger": current_record.get("messenger"),
-                "date": current_record.get("date"),
-                "time": current_record.get("time"),
-                "number": current_record.get("time"),
-                "name": current_record.get("name")
-            }
-
-            text = form_completion(f"Запис {i}", record_data=temp_record)
-            msg = await message.answer(text=text, reply_markup=remove_inline(f"record_{msg_text}_{i}", "Видалити"))
+            msg = await send_record(title=f"Запис {i}", record=current_record, uid=uid)
             add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
     elif name == "ban_user":
         if msg_text in black_list:

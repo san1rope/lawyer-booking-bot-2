@@ -8,7 +8,7 @@ from aiogram import Bot, types
 
 from tg_bot.config import Config
 from tg_bot.misc.data_handling import timeline, all_records, reminder
-from tg_bot.misc.utils import remove_record, form_completion
+from tg_bot.misc.utils import remove_record, send_record
 
 logger = logging.getLogger(__name__)
 
@@ -30,27 +30,14 @@ async def record_monitor(first_start: bool = False):
                             record_time = datetime(year=int(year), month=int(month), day=int(day), hour=int(time_[0]),
                                                    minute=int(time_[1]), tzinfo=current_time.tzinfo)
                             if current_time.astimezone(pytz.UTC) >= record_time.astimezone(pytz.UTC):
-                                print(0)
                                 user_id = timeline[time][year][month][day]
                                 for i in all_records[user_id]:
-                                    if all_records[user_id][i]["time"] == time and all_records[user_id][i]["date"] == record_time.strftime("%d.%m.20%y"):
-                                        print(1)
+                                    if all_records[user_id][i]["time"] == time and all_records[user_id][i][
+                                        "date"] == record_time.strftime("%d.%m.20%y"):
                                         if "Вихідний" not in all_records[user_id][i].get("service"):
                                             current_record = all_records[user_id][i]
-                                            temp_record = {
-                                                "service": current_record.get("service"),
-                                                "messenger": current_record.get("messenger"),
-                                                "date": current_record.get("date"),
-                                                "time": current_record.get("time"),
-                                                "number": current_record.get("number"),
-                                                "name": current_record.get("name")
-                                            }
-                                            text = form_completion(
-                                                "Подошло время вашей записи.\nЗапись будет удалена автоматически.",
-                                                record_data=temp_record
-                                            )
-
-                                            await bot.send_message(chat_id=int(user_id), text=text)
+                                            text = "Подошло время вашей записи.\nЗапись будет удалена автоматически."
+                                            await send_record(title=text, uid=user_id, record=current_record)
 
                                         remove_record(user_id, record_index=i)
 
@@ -76,22 +63,9 @@ async def record_monitor(first_start: bool = False):
                                     for i in all_records[user_id]:
                                         if all_records[user_id][i]["time"] == time:
                                             current_record = all_records[user_id][i]
-                                            temp_record = {
-                                                "service": current_record.get("service"),
-                                                "messenger": current_record.get("messenger"),
-                                                "date": current_record.get("date"),
-                                                "time": current_record.get("time"),
-                                                "number": current_record.get("number"),
-                                                "name": current_record.get("name")
-                                            }
-
                                             temp = str(record_time_delta - current_time_delta).split(':')
-                                            text = form_completion(
-                                                f"Через {temp[0]}:{temp[1]} у вас консультация.",
-                                                record_data=temp_record
-                                            )
-
-                                            await bot.send_message(chat_id=int(user_id), text=text)
+                                            text = f"Через {temp[0]}:{temp[1]} у вас консультация."
+                                            await send_record(title=text, record=current_record, uid=user_id)
 
                                             reminder[user_id].pop(str(i))
                                             if len(reminder[user_id]) == 0:

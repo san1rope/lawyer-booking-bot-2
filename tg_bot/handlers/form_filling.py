@@ -20,12 +20,12 @@ from tg_bot.keyboards.inline.date_keyb import calendar_keyboard
 from tg_bot.keyboards.default.payment_keyb import payment_keyboard
 from tg_bot.keyboards.inline.messengers_keyb import messengers_keyboard
 from tg_bot.keyboards.inline.paid_keyb import paid_keyboard
-from tg_bot.keyboards.inline.services_keyb import services_keyboard
+from tg_bot.keyboards.inline.services_keyb import services_keyboard, add_appeal_keyboard
 from tg_bot.keyboards.inline.time_keyb import time_keyboard
 from tg_bot.misc.data_handling import services, service_prices, all_records, amount_time_per_service, timeline, \
     reminder, appeals
-from tg_bot.misc.states import ProvideContacts, SendAppeal
-from tg_bot.misc.utils import form_completion, delete_messages, add_msg_to_delete
+from tg_bot.misc.states import ProvideContacts, SendAppeal, AddAppealToRecord
+from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
 
 logger = logging.getLogger(__name__)
 
@@ -36,13 +36,11 @@ sub_msg_id = {}
 
 async def start_filling(message: Union[types.Message, types.CallbackQuery], edit_message: bool = False, text: str = ''):
     logger.info(f"Handler called. {start_filling.__name__}. user_id={message.from_user.id}")
+
+    uid = message.from_user.id
     if isinstance(message, types.CallbackQuery):
         await message.answer()
-
-        uid = message.from_user.id
         message = message.message
-    else:
-        uid = message.from_user.id
 
     await delete_messages(uid)
 
@@ -54,15 +52,11 @@ async def start_filling(message: Union[types.Message, types.CallbackQuery], edit
     if uid in temp_records:
         temp_records.pop(uid)
 
-    text = form_completion(f"{text}Ознакомьтесь с прайсом, выберите формат консультации, дату и время 👇")
-
+    text = f"{text}Ознакомьтесь с прайсом, выберите формат консультации, дату и время 👇"
     if edit_message:
-        try:
-            msg = await message.edit_text(text=text, reply_markup=services_keyboard)
-        except MessageToEditNotFound:
-            msg = await message.answer(text=text, reply_markup=services_keyboard)
+        msg = await send_record(title=text, reply_markup=services_keyboard, record={}, uid=uid, edit=message)
     else:
-        msg = await message.answer(text=text, reply_markup=services_keyboard)
+        msg = await send_record(title=text, uid=uid, reply_markup=services_keyboard, record={})
 
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
@@ -75,6 +69,7 @@ async def choose_service(callback: types.CallbackQuery, callback_data: dict, msg
     name = callback_data.get("name")
 
     if callback_data.get("title") == "messengers":
+        temp_callback_data[uid].update({"messenger": callback_data})
         if name == "back":
             return await start_filling(message=callback, edit_message=True)
         elif name == "appeal":
@@ -83,35 +78,37 @@ async def choose_service(callback: types.CallbackQuery, callback_data: dict, msg
                 text = f"<b>Не удалось создать обращение!\nУ вас есть активных обращений: {len(user_appeals)}</b>\n\n"
                 return await start_filling(message=callback.message, edit_message=True, text=text)
 
+            await delete_messages(uid)
+
             text = [
                 "<b>Письменная консультация в формате word 📝</b>",
                 "<b>Пришлите свое обращение к администратору одним сообщением</b>",
                 "<b>Можно присылать документы 📎 и медиа файлы 📷</b>"
-                "<b>Информация и документы подаются за день до онлайн консультации.</b>" 
+                "<b>Информация и документы подаются за день до онлайн консультации.</b>"
             ]
-            msg = await callback.message.edit_text(text='\n'.join(text), reply_markup=back_keyboard)
+            msg = await callback.message.answer(text='\n'.join(text), reply_markup=back_keyboard)
             add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
             await SendAppeal.File.set()
             return
 
-        temp_callback_data[uid].update({"messenger": callback_data})
         temp_records[uid].update({"messenger": name.capitalize()})
     else:
         temp_callback_data[uid] = {"service": callback_data}
         temp_records[uid] = {"service": services.get(name)}
 
         if name == "online_consultation":
-            text = form_completion(title="Выберите мессенджер", record_data=temp_records.get(uid))
-            return await callback.message.edit_text(text=text, reply_markup=messengers_keyboard)
+            text = "Выберите мессенджер"
+            return await send_record(uid=uid, title=text, reply_markup=messengers_keyboard,
+                                     record=temp_records.get(uid), edit=callback.message)
 
     today = datetime.now(Config.TIMEZONE)
     markup = calendar_keyboard(year=today.year, month=today.month, day_=today.day)
-    text = form_completion(title=(msg_text if msg_text else "Оберіть дату"), record_data=temp_records.get(uid))
-    await callback.message.edit_text(text=text, reply_markup=markup)
+    await send_record(title=(msg_text if msg_text else "Выберите дату"), record=temp_records.get(uid),
+                      reply_markup=markup, uid=uid, edit=callback.message)
 
 
-async def send_appeal(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
-    logger.info(f"Handler called. {send_appeal.__name__}. user_id={message.from_user.id}")
+async def appeal_payment(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
+    logger.info(f"Handler called. {appeal_payment.__name__}. user_id={message.from_user.id}")
 
     uid = message.from_user.id
 
@@ -147,22 +144,52 @@ async def send_appeal(message: Union[types.Message, types.CallbackQuery], state:
         await message.answer("<b>Вы прислали неверный тип сообщения!\bПопробуйте ещё раз</b>")
         return
 
-    if str(uid) in appeals:
-        appeals[str(uid)].append(new_appeal)
-    else:
-        appeals[str(uid)] = [new_appeal]
-
-    appeals["last_id"] += 1
-
     await delete_messages(uid)
-    await message.answer(f"<b>Вы добавили новое обращение №{new_appeal['id']}\nОжидайте ответа администратора.</b>",
-                         reply_markup=start_keyboard(message.from_user.id))
 
-    for admin_id in Config.ADMINS:
-        if uid != admin_id:
-            await Bot.get_current().send_message(chat_id=admin_id, text="<b>Добавлено новое обращение!</b>")
+    await state.update_data(appeal=new_appeal)
+    text = f"\n\n<b>К оплате {hcode(service_prices.get('Онлайн консультация'))} грн.</b>"
+    msg = await message.answer(text=text, reply_markup=payment_keyboard)
+    add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
-    await state.reset_state()
+    text = "<b>Чтобы оплатить обращение, \nнажмите кнопку - Перейти к оплате</b>"
+    msg = await message.answer(text=text, reply_markup=paid_keyboard)
+    add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+
+    await SendAppeal.Payment.set()
+
+
+async def send_appeal(callback: types.CallbackQuery, state: FSMContext, callback_data: dict):
+    logger.info(f"Handler called. {send_appeal.__name__}. user_id={callback.from_user.id}")
+    await callback.answer()
+
+    uid = callback.from_user.id
+
+    operation = callback_data.get("name")
+    if operation == "back":
+        await state.reset_state()
+        return await choose_service(callback=callback, callback_data=temp_callback_data[uid].get("messenger"))
+    elif operation == "confirm":
+        data = await state.get_data()
+        new_appeal = data.get("appeal")
+
+        if str(uid) in appeals:
+            appeals[str(uid)].append(new_appeal)
+        else:
+            appeals[str(uid)] = [new_appeal]
+
+        appeals["last_id"] += 1
+
+        await delete_messages(uid)
+
+        await callback.message.answer(
+            f"<b>Вы добавили новое обращение №{new_appeal['id']}\nОжидайте ответа администратора.</b>",
+            reply_markup=start_keyboard(uid))
+
+        for admin_id in Config.ADMINS:
+            if uid != admin_id:
+                await Bot.get_current().send_message(chat_id=admin_id, text="<b>Добавлено новое обращение!</b>")
+
+        await state.reset_state()
 
 
 async def choose_date(callback: types.CallbackQuery, callback_data: dict, msg_text: str = None):
@@ -207,9 +234,9 @@ async def choose_date(callback: types.CallbackQuery, callback_data: dict, msg_te
         temp_records[uid]["date"] = f"{day}.{month}.{year}"
 
         service = temp_records[uid]["service"]
-        text = form_completion(title=(msg_text if msg_text else "Выберите время 🕒"), record_data=temp_records.get(uid))
-        return await callback.message.edit_text(text=text, reply_markup=time_keyboard(
-            year=year, month=month, day=day, service=service))
+        markup = time_keyboard(year=year, month=month, day=day, service=service)
+        return await send_record(title=(msg_text if msg_text else "Выберите время 🕒"), reply_markup=markup, uid=uid,
+                                 record=temp_records.get(uid), edit=callback.message)
 
     if arg1 == "move":
         if uid not in temp_year:
@@ -252,6 +279,12 @@ async def choose_time(callback: types.CallbackQuery, callback_data: dict):
     await callback.answer()
 
     uid = callback.from_user.id
+
+    try:
+        temp_records[uid].pop("number")
+        temp_records[uid].pop("name")
+    except Exception:
+        pass
 
     if (uid in sub_msg_id) and sub_msg_id.get(uid):
         await callback.bot.delete_message(chat_id=uid, message_id=sub_msg_id.get(uid))
@@ -331,60 +364,143 @@ async def write_number(message: Union[types.Message, types.CallbackQuery], state
     await ProvideContacts.Name.set()
 
 
-async def write_name(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
+async def write_name(message: Union[types.Message, types.CallbackQuery], state: FSMContext = None):
     logger.info(f"Handler called. {write_number.__name__}. user_id={message.from_user.id}")
+
+    uid = message.from_user.id
+
+    if state:
+        if isinstance(message, types.CallbackQuery):
+            await message.answer()
+            await state.reset_state()
+            return await choose_time(message, callback_data=temp_callback_data[uid]["time"])
+
+        name = str(message.text)
+
+        await Bot.get_current().delete_message(chat_id=message.chat.id, message_id=msg_state_id.get(uid))
+        await message.delete()
+
+        if name.startswith('/'):
+            if name == "/start":
+                await state.reset_state()
+                return await cmd_start(message)
+            elif name == "/records":
+                await state.reset_state()
+                return await show_records(message)
+            elif name == "/panel":
+                if uid in Config.ADMINS:
+                    await state.reset_state()
+                    return await cmd_panel(message)
+            elif name == "/filling":
+                await state.reset_state()
+                return await start_filling(message)
+            elif name == "common_questions":
+                await state.reset_state()
+                return await show_questions(message)
+
+        for i in name:
+            if i.isdigit():
+                msg_wrong_name = await message.answer("Имя не должно содержать цифр, попробуйте еще раз!")
+                msg_state_id[uid] = msg_wrong_name.message_id
+                return
+
+        data = await state.get_data()
+        number = f"+38{data.get('number')}"
+        temp_records[uid]["number"] = number
+        temp_records[uid]["name"] = name
+
+        await state.reset_state()
+    else:
+        try:
+            message = message.message
+        except Exception:
+            print("exc")
+            pass
+
+    try:
+        temp_records[uid].pop("text")
+        temp_records[uid].pop("file_id")
+        temp_records[uid].pop("file_type")
+    except Exception:
+        print(1)
+        pass
+
+    text = "<b>Желаете прикрепить дополнительный материал?</b>"
+    try:
+        msg = await message.edit_text(text=text, reply_markup=add_appeal_keyboard)
+    except MessageToEditNotFound:
+        msg = await message.answer(text=text, reply_markup=add_appeal_keyboard)
+
+    add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+
+
+async def payment_record(message: Union[types.CallbackQuery, types.Message], callback_data: dict,
+                         continue_: bool = False):
+    logger.info(f"Handler called. {payment_record.__name__}. user_id={message.from_user.id}")
+
+    callback = None
+    uid = message.from_user.id
+    if isinstance(message, types.CallbackQuery):
+        await message.answer()
+        callback = message
+        message = message.message
+
+    name = callback_data.get("name")
+    temp_callback_data[uid].update({"payment": callback_data})
+
+    if name == "continue" or continue_:
+        await delete_messages(uid)
+
+        end = f"\n\n<b>К оплате {hcode(service_prices.get(temp_records[uid]['service']))} грн.</b>"
+        msg = await send_record(title="Ваша запись", end=end, record=temp_records.get(uid), uid=uid)
+        add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+        sub_msg_id[uid] = msg.message_id
+
+        text = "<b>Чтобы оплатить консультацию, \nнажмите кнопку - Перейти к оплате</b>"
+        msg = await message.answer(text=text, reply_markup=paid_keyboard)
+        add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+
+        return
+    elif name == "add":
+        text = "<b>Пришлите дополнительную информацию ОДНИМ сообщением\nМожно использовать файлы</b>"
+        await message.edit_text(text=text, reply_markup=back_keyboard)
+
+        await AddAppealToRecord.File.set()
+    elif name == "back":
+        return await choose_time(callback=callback, callback_data=temp_callback_data[uid]["time"])
+
+
+async def add_appeal_to_record(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
+    logger.info(f"Handler called {add_appeal_to_record.__name__}. user_id={message.from_user.id}")
 
     uid = message.from_user.id
     if isinstance(message, types.CallbackQuery):
         await message.answer()
         await state.reset_state()
-        return await choose_time(message, callback_data=temp_callback_data[uid]["time"])
+        return await write_name(message=message)
 
-    name = str(message.text)
+    if message.content_type == types.ContentType.TEXT:
+        temp_records[uid]["text"] = message.text
+    elif message.content_type == types.ContentType.DOCUMENT:
+        temp_records[uid]["text"] = message.caption
+        temp_records[uid]["file_id"] = message.document.file_id
+        temp_records[uid]["file_type"] = "document"
+    elif message.content_type == types.ContentType.PHOTO:
+        temp_records[uid]["text"] = message.caption
+        temp_records[uid]["file_id"] = message.photo[0].file_id
+        temp_records[uid]["file_type"] = "photo"
+    elif message.content_type == types.ContentType.VIDEO:
+        temp_records[uid]["text"] = message.caption
+        temp_records[uid]["file_id"] = message.video.file_id
+        temp_records[uid]["file_type"] = "video"
+    else:
+        await message.answer("<b>Вы прислали неверный тип сообщения!\bПопробуйте ещё раз</b>")
+        return
 
-    await Bot.get_current().delete_message(chat_id=message.chat.id, message_id=msg_state_id.get(uid))
-    await message.delete()
-
-    if name.startswith('/'):
-        if name == "/start":
-            await state.reset_state()
-            return await cmd_start(message)
-        elif name == "/records":
-            await state.reset_state()
-            return await show_records(message)
-        elif name == "/panel":
-            if uid in Config.ADMINS:
-                await state.reset_state()
-                return await cmd_panel(message)
-        elif name == "/filling":
-            await state.reset_state()
-            return await start_filling(message)
-        elif name == "common_questions":
-            await state.reset_state()
-            return await show_questions(message)
-
-    for i in name:
-        if i.isdigit():
-            msg_wrong_name = await message.answer("Имя не должно содержать цифр, попробуйте еще раз!")
-            msg_state_id[uid] = msg_wrong_name.message_id
-            return
-
-    data = await state.get_data()
-    number = f"+38{data.get('number')}"
-    temp_records[uid]["number"] = number
-    temp_records[uid]["name"] = name
-
-    text = form_completion("Ваша запись", record_data=temp_records.get(uid))
-    text += f"\n\n<b>К оплате {hcode(service_prices.get(temp_records[uid]['service']))} грн.</b>"
-    msg = await message.answer(text=text, reply_markup=payment_keyboard)
-    add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
-    sub_msg_id[uid] = msg.message_id
-
-    text = "<b>Чтобы оплатить консультацию, \nнажмите кнопку - Перейти к оплате</b>"
-    msg = await message.answer(text=text, reply_markup=paid_keyboard)
-    add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+    await delete_messages(uid)
 
     await state.reset_state()
+    await payment_record(message=message, callback_data=temp_callback_data[uid]["payment"], continue_=True)
 
 
 async def save_record(callback: types.CallbackQuery, callback_data: dict):
@@ -399,7 +515,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
 
     name = callback_data.get("name")
     if name == "back":
-        return await choose_time(callback, callback_data=temp_callback_data[uid]["time"])
+        return await write_name(message=callback)
 
     # Сохраняю запись в словарь, который в on_shutdown выгружу в json
     if str(uid) not in all_records:
@@ -410,7 +526,6 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
         return
     else:
         all_records[str(uid)].update({str(len(all_records[str(uid)]) + 1): temp_records[uid]})
-        print(all_records)
 
     # Занимаю временной промежуток записи в словарь, который в on_shutdown выгружу в json
     date_split = temp_records[uid]["date"].split('.')
@@ -445,17 +560,15 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
     else:
         reminder[str(uid)].update({str(len(all_records[str(uid)])): temp_records[uid].get("time")})
 
-    text = form_completion("Добавлено новую запись❗", record_data=temp_records.get(uid))
     for adm in Config.ADMINS:
         if adm != uid:
             try:
-                await callback.bot.send_message(chat_id=adm, text=text)
+                await send_record(title="Добавлено новую запись!", uid=str(uid), record=temp_records.get(uid))
             except (ChatNotFound, BotBlocked):
                 continue
 
     await callback.message.delete()
-    text = form_completion("Запись сохрнена ✔️", record_data=temp_records.get(uid))
-    await callback.message.answer(text=text, reply_markup=start_keyboard(uid))
+    await send_record(title="Запись сохранена ✔", record=temp_records.get(uid), uid=str(uid))
 
 
 def register_form_filling(dp: Dispatcher):
@@ -466,8 +579,9 @@ def register_form_filling(dp: Dispatcher):
                                        tc.filter(title="service"))
     dp.register_callback_query_handler(choose_service, ChatTypeFilter(types.ChatType.PRIVATE),
                                        tc.filter(title="messengers"))
-    dp.register_message_handler(send_appeal, state=SendAppeal.File, content_types=types.ContentType.ANY)
-    dp.register_callback_query_handler(send_appeal, state=SendAppeal.File)
+    dp.register_message_handler(appeal_payment, state=SendAppeal.File, content_types=types.ContentType.ANY)
+    dp.register_callback_query_handler(appeal_payment, state=SendAppeal.File)
+    dp.register_callback_query_handler(send_appeal, tc.filter(title="service_paid"), state=SendAppeal.Payment)
     dp.register_callback_query_handler(choose_date, ChatTypeFilter(types.ChatType.PRIVATE), cc.filter(title="calendar"))
     dp.register_callback_query_handler(choose_time, ChatTypeFilter(types.ChatType.PRIVATE), tcb.filter(title="time"))
 
@@ -476,5 +590,9 @@ def register_form_filling(dp: Dispatcher):
     dp.register_message_handler(write_name, state=ProvideContacts.Name)
     dp.register_callback_query_handler(write_name, state=ProvideContacts.Name, text="back_state")
 
+    dp.register_callback_query_handler(payment_record, ChatTypeFilter(types.ChatType.PRIVATE),
+                                       tc.filter(title="add_appeal"))
+    dp.register_message_handler(add_appeal_to_record, state=AddAppealToRecord.File, content_types=types.ContentType.ANY)
+    dp.register_callback_query_handler(add_appeal_to_record, state=AddAppealToRecord.File)
     dp.register_callback_query_handler(save_record, ChatTypeFilter(types.ChatType.PRIVATE),
                                        tc.filter(title="service_paid"))

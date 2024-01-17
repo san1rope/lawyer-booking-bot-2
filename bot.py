@@ -69,6 +69,8 @@ if __name__ == "__main__":
     bot = Bot(token=Config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
     dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
+    register_all_middlewares(dp)
+    register_all_filters(dp)
     register_all_handlers(dp)
 
     loop = asyncio.get_event_loop()

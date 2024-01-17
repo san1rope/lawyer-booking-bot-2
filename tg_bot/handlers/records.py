@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import ChatTypeFilter, Command, Text
 from tg_bot.keyboards.default.start_keyb import title_records
 from tg_bot.keyboards.inline.remove_keyb import remove_inline
 from tg_bot.misc.data_handling import all_records
-from tg_bot.misc.utils import form_completion, delete_messages, add_msg_to_delete
+from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
 
 
 async def show_records(message: types.Message):
@@ -18,17 +18,9 @@ async def show_records(message: types.Message):
 
     for i in all_records[str(uid)]:
         current_record = all_records[str(uid)][i]
-        temp_record = {
-            "service": current_record.get("service"),
-            "messenger": current_record.get("messenger"),
-            "date": current_record.get("date"),
-            "time": current_record.get("time"),
-            "number": current_record.get("number"),
-            "name": current_record.get("name")
-        }
-
-        text = form_completion(f"Запись {i}", record_data=temp_record)
-        msg = await message.answer(text=text, reply_markup=remove_inline(f"record_{uid}_{i}", "Удалить"))
+        text = f"Запись {i}"
+        markup = remove_inline(f"record_{uid}_{i}", "Удалить")
+        msg = await send_record(title=text, reply_markup=markup, uid=uid, record=current_record)
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
 

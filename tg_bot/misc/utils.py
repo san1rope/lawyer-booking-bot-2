@@ -1,24 +1,28 @@
+import types
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Union
 
 from aiogram import Bot
+from aiogram.types import Message, ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove, ParseMode
 from aiogram.utils.exceptions import MessageToDeleteNotFound, MessageCantBeDeleted
 from aiogram.utils.markdown import hcode
 
+from tg_bot.config import Config
 from tg_bot.misc.data_handling import msg_to_delete, all_records, timeline, amount_time_per_service, reminder
 
 
-def form_completion(title: str, record_data: Optional[dict] = None) -> str:
+def form_completion(title: str, end: str = '', record_data: Optional[dict] = None) -> str:
     if record_data:
         service = record_data.get("service")
         date = record_data.get("date")
         time = record_data.get("time")
         number = record_data.get("number")
         name = record_data.get("name")
+        text = record_data.get("text")
     else:
-        service, date, time, number, name = None, None, None, None, None
+        service, date, time, number, name, text = None, None, None, None, None, None
 
-    text = [
+    r_text = [
         f"<b>{title}</b>",
         f"{hcode('Услуга:')} {service if service else ''}",
         f"{hcode('Дата:')} {date if date else ''}",
@@ -27,9 +31,14 @@ def form_completion(title: str, record_data: Optional[dict] = None) -> str:
         hcode('Имя: ') + str(name if name else '')
     ]
     if record_data and record_data.get("messenger"):
-        text.insert(2, f"{hcode('Месенджер:')} {record_data.get('messenger')}")
+        r_text.insert(2, f"{hcode('Месенджер:')} {record_data.get('messenger')}")
 
-    return '\n\n'.join(text)
+    if text:
+        r_text.append(f"{hcode('Текст: ')} {text}")
+
+    r_text.append(end)
+
+    return '\n\n'.join(r_text)
 
 
 def add_msg_to_delete(user_id: int, msg_id: int):
@@ -53,7 +62,6 @@ async def delete_messages(user_id: Optional[int] = None):
             return
 
         for msg_id in msg_to_delete[user_id]:
-            print(f"1 msg_id = {msg_id}")
             try:
                 await Bot.get_current().delete_message(chat_id=user_id, message_id=msg_id)
             except (MessageToDeleteNotFound, MessageCantBeDeleted):
@@ -86,7 +94,7 @@ def remove_record(user_id: str, record_index: str):
             if len(timeline[time_str][year]) == 0:
                 timeline[time_str].pop(year)
 
-        time_start += timedelta(minutes=30)
+        time_start += timedelta(hours=1)
 
     all_records[user_id].pop(record_index)
     if len(all_records[user_id]) == 0:
@@ -96,3 +104,30 @@ def remove_record(user_id: str, record_index: str):
         reminder[user_id].pop(record_index)
         if not reminder[user_id]:
             reminder.pop(user_id)
+
+
+async def send_record(title: str, record: dict, uid: str, end: str = '', edit: Message = None,
+                      reply_markup: Union[
+                          ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove] = None) -> Message:
+    text = form_completion(title=title, end=end, record_data=record)
+    file_id = record.get("file_id")
+    if file_id:
+        file_type = record.get("file_type")
+
+        if file_type == "photo":
+            return await Config.BOT.send_photo(chat_id=uid, photo=file_id, caption=text, reply_markup=reply_markup)
+        elif file_type == "video":
+            return await Config.BOT.send_video(chat_id=uid, video=file_id, caption=text, reply_markup=reply_markup)
+        elif file_type == "document":
+            return await Config.BOT.send_document(chat_id=uid, document=file_id, caption=text,
+                                                  reply_markup=reply_markup)
+    else:
+        if edit:
+            try:
+                return await edit.edit_text(text=text, reply_markup=reply_markup,
+                                            disable_web_page_preview=True)
+            except Exception:
+                pass
+
+        return await Config.BOT.send_message(chat_id=uid, text=text, reply_markup=reply_markup,
+                                             disable_web_page_preview=True)

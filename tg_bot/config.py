@@ -3,6 +3,8 @@ from typing import List
 import pytz
 import os
 
+from aiogram import Bot
+from aiogram.types import ParseMode
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,6 +12,7 @@ load_dotenv()
 
 class Config:
     BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+    BOT: Bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
     ADMINS: List[int] = [int(admin_id) for admin_id in os.getenv("ADMINS").strip().split(',')]
     TIMEZONE = pytz.timezone(os.getenv("TIMEZONE"))
 

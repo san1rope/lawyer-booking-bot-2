@@ -10,9 +10,22 @@ from tg_bot.misc.utils import remove_record
 async def remove_confirmation(callback: types.CallbackQuery, callback_data: dict):
     await callback.answer()
 
+    temp = ''
     name = callback_data.get("name")
-    text = callback.message.text
-    await callback.message.edit_text(text=text, reply_markup=remove_confirm(name))
+    name_ = name.split("_")
+    if name_[0] == "unbanuser":
+        temp = "разблокировать пользователя"
+    elif name_[0] == "banuser":
+        temp = "заблокировать пользователя"
+    elif name_[0] == "record":
+        temp = "удалить запись"
+
+    text = f"<b>Вы точно хотите {temp}?</b>"
+    markup = remove_confirm(name)
+    try:
+        await callback.message.edit_text(text=text, reply_markup=markup)
+    except Exception:
+        await callback.message.edit_caption(caption=text, reply_markup=markup)
 
 
 async def remove_data(callback: types.CallbackQuery, callback_data: dict):
@@ -30,16 +43,20 @@ async def remove_data(callback: types.CallbackQuery, callback_data: dict):
 
     if name_[0] == "banuser":
         black_list[user_id] = f"{name_[2]}_{name_[3]}"
-        temp = "блокировка пользователя"
+        temp = "блокировку пользователя"
     elif name_[0] == "unbanuser":
         black_list.pop(user_id)
-        temp = "разблокировка пользователя"
+        temp = "разблокировку пользователя"
 
     if name_[0] == "record":
         remove_record(user_id, data_number)
         temp = "удаление записи"
 
-    await callback.message.edit_text(f"<b>Вы подтвердили {temp}</b>")
+    text = f"<b>Вы подтвердили {temp}</b>"
+    try:
+        await callback.message.edit_text(text=text)
+    except Exception:
+        await callback.message.edit_caption(caption=text)
 
 
 def register_remove_data(dp: Dispatcher):

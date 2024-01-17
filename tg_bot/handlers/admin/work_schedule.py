@@ -11,7 +11,7 @@ from tg_bot.keyboards.inline.admin_keyb import work_schedule_calendar, work_sche
     back_to_time_selection
 from tg_bot.keyboards.inline.callback_data import calendar_callback as cc, time_callback as tcb, temp_callback as tc
 from tg_bot.misc.data_handling import all_records, timeline, amount_time_per_service
-from tg_bot.misc.utils import form_completion, add_msg_to_delete
+from tg_bot.misc.utils import add_msg_to_delete, send_record
 
 t_year, t_month, t_day = {}, {}, {}
 temp_calldata = {}
@@ -97,6 +97,7 @@ async def selected_date(callback: types.CallbackQuery, callback_data: dict):
 async def selected_time(callback: types.CallbackQuery, callback_data: dict):
     await callback.answer()
 
+    uid = callback.from_user.id
     hour, minute = callback_data.get("hour"), callback_data.get("minute")
     if hour == "back":
         await show_calendar(callback)
@@ -104,20 +105,12 @@ async def selected_time(callback: types.CallbackQuery, callback_data: dict):
 
     if hour == "show_record":
         userdata = minute.split("_")
-        uid, record_number = userdata[0], userdata[1]
+        record_uid, record_number = userdata[0], userdata[1]
 
-        current_record = all_records[uid][record_number]
-        temp_record = {
-            "service": current_record.get("service"),
-            "messenger": current_record.get("messenger"),
-            "date": current_record.get("date"),
-            "time": current_record.get("time"),
-            "number": current_record.get("number"),
-            "name": current_record.get("name")
-        }
-
-        text = form_completion(f"Запись {record_number} пользователя с \nID: {uid}", record_data=temp_record)
-        return await callback.message.edit_text(text=text, reply_markup=back_inline("back_from_record"))
+        current_record = all_records[record_uid][record_number]
+        text = f"Запись {record_number} пользователя с \nID: {record_uid}"
+        return await send_record(title=text, reply_markup=back_inline("back_from_record"), uid=uid,
+                                 record=current_record, edit=callback.message)
 
     if hour == "all_day":
         return await callback.message.edit_text("<b>Вы хотите занять день полностью?</b>",
@@ -139,8 +132,8 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
 
     if name == "all_day":
         for tm in timeline:
-            record = {"service": "Вихідний", "date": f"{day}.{month}.{year}",
-                      "time": tm, "number": "admin", "name": "admin"}
+            record = {"service": "Выходной", "date": f"{day}.{month}.{year}",
+                      "time": tm, "number": "admin", "name": "admin", "text": "admin"}
             if "weekend" not in all_records:
                 all_records["weekend"] = {"1": record}
             else:
@@ -161,7 +154,8 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
             "date": f"{day}.{month}.{year}",
             "time": f"{time[0]}:{time[1]}",
             "number": "admin",
-            "name": "admin"
+            "name": "admin",
+            "text": "admin"
         }
 
         if "weekend" not in all_records:

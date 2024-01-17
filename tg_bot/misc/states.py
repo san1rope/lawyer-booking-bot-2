@@ -8,6 +8,7 @@ class ProvideContacts(StatesGroup):
 
 class SendAppeal(StatesGroup):
     File = State()
+    Payment = State()
 
 
 class AnswerAppeal(StatesGroup):
@@ -17,3 +18,7 @@ class AnswerAppeal(StatesGroup):
 
 class FindData(StatesGroup):
     UserId = State()
+
+
+class AddAppealToRecord(StatesGroup):
+    File = State()

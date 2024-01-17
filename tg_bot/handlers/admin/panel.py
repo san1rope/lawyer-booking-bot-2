@@ -21,7 +21,7 @@ async def cmd_panel(message: types.Message | types.CallbackQuery):
     records_count = 0
     for user_id in all_records:
         for record_index in all_records[user_id]:
-            if all_records[user_id][record_index].get("service") == "Вихідний":
+            if all_records[user_id][record_index].get("service") == "Выходной":
                 continue
 
             records_count += 1
