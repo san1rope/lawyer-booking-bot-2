@@ -3,10 +3,9 @@ import logging
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import ChatTypeFilter, Text, Command
 
-from tg_bot.keyboards.default.start_keyb import title_common_questions
 from tg_bot.keyboards.inline.callback_data import question_callback as qc
 from tg_bot.keyboards.inline.questions_keyb import questions_keyboard
-from tg_bot.misc.data_handling import questions, categories, subcategories
+from tg_bot.misc.data_handling import questions, categories, subcategories, bot_commands
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +37,6 @@ async def show_category_data(callback: types.CallbackQuery, callback_data: dict)
 
 def register_common_questions(dp: Dispatcher):
     dp.register_message_handler(show_questions, ChatTypeFilter(types.ChatType.PRIVATE),
-                                Text(title_common_questions) | Command("common_questions"))
+                                Text(bot_commands.get("/common_questions")) | Command("common_questions"))
     dp.register_callback_query_handler(show_category_data, ChatTypeFilter(types.ChatType.PRIVATE),
                                        qc.filter(title="question"))

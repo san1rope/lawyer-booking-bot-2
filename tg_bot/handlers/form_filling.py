@@ -11,9 +11,11 @@ from aiogram.utils.markdown import hcode
 from tg_bot.config import Config
 from tg_bot.handlers.admin.panel import cmd_panel
 from tg_bot.handlers.common_questions import show_questions
+from tg_bot.handlers.contacts import show_contacts
 from tg_bot.handlers.records import show_records
+from tg_bot.handlers.show_appeals import show_user_appeals
 from tg_bot.handlers.start import cmd_start
-from tg_bot.keyboards.default.start_keyb import start_keyboard, title_start_recording
+from tg_bot.keyboards.default.start_keyb import start_keyboard
 from tg_bot.keyboards.inline.back_keyb import back_keyboard
 from tg_bot.keyboards.inline.callback_data import temp_callback as tc, calendar_callback as cc, time_callback as tcb
 from tg_bot.keyboards.inline.date_keyb import calendar_keyboard
@@ -23,7 +25,7 @@ from tg_bot.keyboards.inline.paid_keyb import paid_keyboard
 from tg_bot.keyboards.inline.services_keyb import services_keyboard, add_appeal_keyboard
 from tg_bot.keyboards.inline.time_keyb import time_keyboard
 from tg_bot.misc.data_handling import services, service_prices, all_records, amount_time_per_service, timeline, \
-    reminder, appeals
+    reminder, appeals, bot_commands
 from tg_bot.misc.states import ProvideContacts, SendAppeal, AddAppealToRecord
 from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
 
@@ -116,6 +118,32 @@ async def appeal_payment(message: Union[types.Message, types.CallbackQuery], sta
         await message.answer()
         await state.reset_state()
         return await choose_service(callback=message, callback_data=temp_callback_data[uid].get("service"))
+
+    if message.text:
+        msg_text = message.text.strip()
+        if msg_text.startswith("/"):
+            if msg_text == "/start":
+                await state.reset_state()
+                return await cmd_start(message)
+            elif msg_text == "/records":
+                await state.reset_state()
+                return await show_records(message)
+            elif msg_text == "/apanel":
+                if uid in Config.ADMINS:
+                    await state.reset_state()
+                    return await cmd_panel(message)
+            elif msg_text == "/filling":
+                await state.reset_state()
+                return await start_filling(message)
+            elif msg_text == "/common_questions":
+                await state.reset_state()
+                return await show_questions(message)
+            elif msg_text == "/contacts":
+                await state.reset_state()
+                return await show_contacts(message=message)
+            elif msg_text == "/appeals":
+                await state.reset_state()
+                return await show_user_appeals(message=message)
 
     new_appeal = {
         "id": appeals["last_id"] + 1,
@@ -346,9 +374,15 @@ async def write_number(message: Union[types.Message, types.CallbackQuery], state
         elif number == "/filling":
             await state.reset_state()
             return await start_filling(message)
-        elif number == "common_questions":
+        elif number == "/common_questions":
             await state.reset_state()
             return await show_questions(message)
+        elif number == "/contacts":
+            await state.reset_state()
+            return await show_contacts(message=message)
+        elif number == "/appeals":
+            await state.reset_state()
+            return await show_user_appeals(message=message)
 
     if not number.isdigit() or len(number) != 10:
         msg_wrong_number = await message.answer("Неправильный формат номера телефона\nПример: 0971826259",
@@ -397,6 +431,12 @@ async def write_name(message: Union[types.Message, types.CallbackQuery], state: 
             elif name == "common_questions":
                 await state.reset_state()
                 return await show_questions(message)
+            elif name == "/contacts":
+                await state.reset_state()
+                return await show_contacts(message=message)
+            elif name == "/appeals":
+                await state.reset_state()
+                return await show_user_appeals(message=message)
 
         for i in name:
             if i.isdigit():
@@ -425,7 +465,7 @@ async def write_name(message: Union[types.Message, types.CallbackQuery], state: 
         print(1)
         pass
 
-    text = "<b>Желаете прикрепить дополнительный материал?</b>"
+    text = "<b>Желаете прикрепить дополнительные материалы?\nЕсли такой необходимости нет, жми - Продолжить</b>"
     try:
         msg = await message.edit_text(text=text, reply_markup=add_appeal_keyboard)
     except MessageToEditNotFound:
@@ -575,7 +615,7 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
 
 def register_form_filling(dp: Dispatcher):
     dp.register_message_handler(start_filling, ChatTypeFilter(types.ChatType.PRIVATE),
-                                Text(title_start_recording) | Command("filling"))
+                                Text(bot_commands.get("/filling")) | Command("filling"))
     dp.register_callback_query_handler(start_filling, ChatTypeFilter(types.ChatType.PRIVATE), text="back_price")
     dp.register_callback_query_handler(choose_service, ChatTypeFilter(types.ChatType.PRIVATE),
                                        tc.filter(title="service"))

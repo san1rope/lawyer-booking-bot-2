@@ -8,7 +8,7 @@ from aiogram.utils.markdown import hcode
 from tg_bot.keyboards.inline.callback_data import temp_callback as tc
 from tg_bot.keyboards.inline.remove_confirm_keyb import remove_confirm
 from tg_bot.keyboards.inline.remove_keyb import remove_inline
-from tg_bot.misc.data_handling import appeals
+from tg_bot.misc.data_handling import appeals, bot_commands
 from tg_bot.misc.utils import delete_messages, add_msg_to_delete
 
 logger = logging.getLogger(__name__)
@@ -138,7 +138,7 @@ async def remove_appeal_user(callback: types.CallbackQuery, callback_data: dict)
 
 def register_appeals(dp: Dispatcher):
     dp.register_message_handler(show_user_appeals, ChatTypeFilter(types.ChatType.PRIVATE),
-                                Text("Обращения") | Command("appeals"))
+                                Text(bot_commands.get("/appeals")) | Command("appeals"))
     dp.register_callback_query_handler(remove_confirm_appeal_user, ChatTypeFilter(types.ChatType.PRIVATE),
                                        tc.filter(title="remove_appeal_user"))
     dp.register_callback_query_handler(remove_appeal_user, ChatTypeFilter(types.ChatType.PRIVATE),

@@ -1,12 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from tg_bot.config import Config
-
-title_start_recording = "Записаться на консультацию"
-title_contacts = "Контакты"
-title_common_questions = "Частые вопросы"
-title_records = "Записи"
-title_appeals = "Обращения"
+from tg_bot.misc.data_handling import bot_commands
 
 
 def start_keyboard(user_id: int) -> ReplyKeyboardMarkup:
@@ -14,21 +9,21 @@ def start_keyboard(user_id: int) -> ReplyKeyboardMarkup:
         resize_keyboard=True,
         keyboard=[
             [
-                KeyboardButton(text=title_start_recording)
+                KeyboardButton(text=bot_commands.get("/filling"))
             ],
             [
-                KeyboardButton(text=title_contacts),
-                KeyboardButton(text=title_common_questions),
-                KeyboardButton(text=title_records)
+                KeyboardButton(text=bot_commands.get("/contacts")),
+                KeyboardButton(text=bot_commands.get("/common_questions")),
+                KeyboardButton(text=bot_commands.get("/records"))
             ],
             [
-                KeyboardButton(text=title_appeals)
+                KeyboardButton(text=bot_commands.get("/appeals"))
             ]
         ]
     )
 
     if user_id in Config.ADMINS:
-        button = KeyboardButton("Меню администратора")
+        button = KeyboardButton(bot_commands.get("/apanel"))
         markup.row(button)
 
     return markup

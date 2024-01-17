@@ -5,8 +5,8 @@ from aiogram.dispatcher.filters import ChatTypeFilter, Text, Command
 from aiogram.utils.markdown import hcode
 
 from tg_bot.config import Config
-from tg_bot.keyboards.default.start_keyb import title_contacts
 from tg_bot.keyboards.inline.contacts_keyb import contacts_keyboard
+from tg_bot.misc.data_handling import bot_commands
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ async def show_office_location(callback: types.CallbackQuery):
     await callback.answer()
 
     text = [
-        "<b>Адреса офісу:</b>\n",
+        "<b>Адрес офиса:</b>\n",
         hcode(Config.CONTACTS_ADDRESS)
     ]
 
@@ -54,7 +54,7 @@ async def show_email(callback: types.CallbackQuery):
 
 def register_contacts(dp: Dispatcher):
     dp.register_message_handler(show_contacts, ChatTypeFilter(types.ChatType.PRIVATE),
-                                Text(title_contacts) | Command('contacts'))
+                                Text(bot_commands.get("/contacts")) | Command('contacts'))
     dp.register_callback_query_handler(show_phone_number, text="contacts_phone_number")
     dp.register_callback_query_handler(show_office_location, text="contacts_office_location")
     dp.register_callback_query_handler(show_email, text="contacts_email")

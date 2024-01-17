@@ -11,7 +11,7 @@ from tg_bot.handlers import *
 from tg_bot.filters import *
 from tg_bot.middlewares import *
 from tg_bot.misc.record_monitoring import record_monitor
-from tg_bot.misc.data_handling import load_data, upload_data
+from tg_bot.misc.data_handling import load_data, upload_data, bot_commands
 from tg_bot.misc.utils import delete_messages
 
 logger = logging.getLogger(__name__)
@@ -19,11 +19,7 @@ logger = logging.getLogger(__name__)
 
 async def set_bot_commands(bot: Bot):
     commands = [
-        BotCommand(command="/start", description="Главное меню"),
-        BotCommand(command="/filling", description="Начать запись"),
-        BotCommand(command="/records", description="Ваши записи"),
-        BotCommand(command="/appeals", description="Ваши обращения"),
-        BotCommand(command="/common_questions", description="Частые вопросы")
+        BotCommand(command=cmd, description=desc) for cmd, desc in zip(bot_commands.keys(), bot_commands.values())
     ]
     await bot.set_my_commands(commands=commands)
 

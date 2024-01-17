@@ -10,7 +10,9 @@ from aiogram.utils.exceptions import MessageToDeleteNotFound
 from tg_bot.config import Config
 from tg_bot.handlers.admin.panel import cmd_panel
 from tg_bot.handlers.common_questions import show_questions
+from tg_bot.handlers.contacts import show_contacts
 from tg_bot.handlers.form_filling import start_filling
+from tg_bot.handlers.show_appeals import show_user_appeals
 from tg_bot.handlers.start import cmd_start
 from tg_bot.handlers.records import show_records
 from tg_bot.keyboards.inline.callback_data import temp_callback as tc
@@ -60,7 +62,7 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
         elif msg_text == "/records":
             await state.reset_state()
             return await show_records(message)
-        elif msg_text == "/apanel":
+        elif msg_text == "/panel":
             if uid in Config.ADMINS:
                 await state.reset_state()
                 return await cmd_panel(message)
@@ -70,6 +72,12 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
         elif msg_text == "common_questions":
             await state.reset_state()
             return await show_questions(message)
+        elif msg_text == "/contacts":
+            await state.reset_state()
+            return await show_contacts(message=message)
+        elif msg_text == "/appeals":
+            await state.reset_state()
+            return await show_user_appeals(message=message)
 
     await message.delete()
 

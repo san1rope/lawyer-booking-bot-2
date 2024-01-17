@@ -1,7 +1,7 @@
 import logging
 
 from aiogram import types, Dispatcher
-from aiogram.dispatcher.filters import ChatTypeFilter, CommandStart
+from aiogram.dispatcher.filters import ChatTypeFilter, CommandStart, Text
 
 from tg_bot.keyboards.default.start_keyb import start_keyboard
 
@@ -16,4 +16,4 @@ async def cmd_start(message: types.Message):
 
 
 def register_start(dp: Dispatcher):
-    dp.register_message_handler(cmd_start, ChatTypeFilter(types.ChatType.PRIVATE), CommandStart())
+    dp.register_message_handler(cmd_start, ChatTypeFilter(types.ChatType.PRIVATE), CommandStart() | Text("Старт"))

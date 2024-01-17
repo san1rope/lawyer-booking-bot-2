@@ -6,7 +6,14 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.utils.markdown import hcode
 
+from tg_bot.config import Config
 from tg_bot.handlers.admin.panel import cmd_panel
+from tg_bot.handlers.common_questions import show_questions
+from tg_bot.handlers.contacts import show_contacts
+from tg_bot.handlers.form_filling import start_filling
+from tg_bot.handlers.records import show_records
+from tg_bot.handlers.show_appeals import show_user_appeals
+from tg_bot.handlers.start import cmd_start
 from tg_bot.keyboards.inline.admin_keyb import appeals_inline, panel_inline
 from tg_bot.keyboards.inline.callback_data import temp_callback as tc
 from tg_bot.keyboards.inline.remove_confirm_keyb import remove_confirm
@@ -83,6 +90,31 @@ async def back_to_panel(callback: types.CallbackQuery):
 async def appeal_answer(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
     logger.info(f"Handler called. {appeal_answer.__name__}. user_id={message.from_user.id}")
 
+    msg_text = message.text.strip()
+    if msg_text.startswith("/"):
+        if msg_text == "/start":
+            await state.reset_state()
+            return await cmd_start(message)
+        elif msg_text == "/records":
+            await state.reset_state()
+            return await show_records(message)
+        elif msg_text == "/panel":
+            if str(message.from_user.id) in Config.ADMINS:
+                await state.reset_state()
+                return await cmd_panel(message)
+        elif msg_text == "/filling":
+            await state.reset_state()
+            return await start_filling(message)
+        elif msg_text == "common_questions":
+            await state.reset_state()
+            return await show_questions(message)
+        elif msg_text == "/contacts":
+            await state.reset_state()
+            return await show_contacts(message=message)
+        elif msg_text == "/appeals":
+            await state.reset_state()
+            return await show_user_appeals(message=message)
+
     temp_appeal = temp_appeals.get(message.from_user.id)
     appeal_user_id = temp_appeal.get("user_id")
     appeal_id = temp_appeal.get("appeal_id")
@@ -112,7 +144,6 @@ async def appeal_answer(message: Union[types.Message, types.CallbackQuery], stat
         await Bot.get_current().send_document(chat_id=int(appeal_user_id), document=message.document.file_id,
                                               caption='\n'.join(text))
     elif message.content_type == types.ContentType.PHOTO:
-        print("photo")
         if message.caption:
             text.append(message.caption)
 

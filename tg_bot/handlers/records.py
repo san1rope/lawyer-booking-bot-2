@@ -1,9 +1,8 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import ChatTypeFilter, Command, Text
 
-from tg_bot.keyboards.default.start_keyb import title_records
 from tg_bot.keyboards.inline.remove_keyb import remove_inline
-from tg_bot.misc.data_handling import all_records
+from tg_bot.misc.data_handling import all_records, bot_commands
 from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
 
 
@@ -26,4 +25,4 @@ async def show_records(message: types.Message):
 
 def register_records(dp: Dispatcher):
     dp.register_message_handler(show_records, ChatTypeFilter(types.ChatType.PRIVATE),
-                                Text(title_records) | Command('records'))
+                                Text(bot_commands.get("/records")) | Command('records'))
