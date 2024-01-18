@@ -497,7 +497,7 @@ async def payment_record(message: Union[types.CallbackQuery, types.Message], cal
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
         sub_msg_id[uid] = msg.message_id
 
-        text = "<b>Чтобы оплатить консультацию, \nнажмите кнопку - Перейти к оплате</b>"
+        text = "<b>Чтобы оплатить консультацию, \nнажмите внизу экрана кнопку - Перейти к оплате💳</b>"
         msg = await message.answer(text=text, reply_markup=paid_keyboard)
         add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
