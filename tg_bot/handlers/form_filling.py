@@ -179,7 +179,7 @@ async def appeal_payment(message: Union[types.Message, types.CallbackQuery], sta
     msg = await message.answer(text=text, reply_markup=payment_keyboard)
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
-    text = "<b>Чтобы оплатить обращение, \nнажмите кнопку - Перейти к оплате</b>"
+    text = "<b>Чтобы оплатить обращение, \nнажмите внизу экрана кнопку - Перейти к оплате💳</b>"
     msg = await message.answer(text=text, reply_markup=paid_keyboard)
     add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
