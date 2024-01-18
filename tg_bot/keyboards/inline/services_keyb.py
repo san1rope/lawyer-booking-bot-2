@@ -27,6 +27,9 @@ add_appeal_keyboard = InlineKeyboardMarkup(
             InlineKeyboardButton(text="Добавить", callback_data=tc.new(title="add_appeal", name="add"))
         ],
         [
+            InlineKeyboardButton(text="Отправить несколько документов", url="https://t.me/advocate_Pavel_Masalov"))
+        ],
+        [
             InlineKeyboardButton(text="Назад", callback_data=tc.new(title="add_appeal", name="back"))
         ]
     ]
