@@ -503,7 +503,7 @@ async def payment_record(message: Union[types.CallbackQuery, types.Message], cal
 
         return
     elif name == "add":
-        text = "<b>Пришлите дополнительную информацию ОДНИМ сообщением\nМожно использовать файлы</b>"
+        text = "<b>Пришлите дополнительную информацию ОДНИМ сообщением\nВыберите файл 📎 и в описании к нему ✍🏼 изложите свой вопрос.</b>"
         await message.edit_text(text=text, reply_markup=back_keyboard)
 
         await AddAppealToRecord.File.set()
