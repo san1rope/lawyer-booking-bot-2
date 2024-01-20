@@ -1,3 +1,5 @@
+from typing import Union
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import ChatTypeFilter, Command, Text
 from aiogram.utils.markdown import hcode
@@ -8,13 +10,10 @@ from tg_bot.misc.data_handling import all_records, appeals
 from tg_bot.misc.utils import delete_messages, add_msg_to_delete
 
 
-async def cmd_panel(message: types.Message | types.CallbackQuery):
+async def cmd_panel(message: Union[types.Message, types.CallbackQuery]):
+    uid = message.from_user.id
     if isinstance(message, types.CallbackQuery):
-        uid = message.from_user.id
         message = message.message
-    else:
-        uid = message.from_user.id
-        await message.delete()
 
     await delete_messages(uid)
 

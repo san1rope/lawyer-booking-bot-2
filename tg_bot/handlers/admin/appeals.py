@@ -52,31 +52,34 @@ async def show_appeals(callback: types.CallbackQuery):
     if appeal_username:
         text.append(f"<b>Username пользователя: {hcode(appeal_username)}</b>\n")
 
-    appeal_file_id = current_appeal.get("file_id")
-    if appeal_file_id:
-        appeal_text = current_appeal.get("text")
-        if appeal_text:
-            text.append(appeal_text)
+    appeal_files = current_appeal.get("files")
+    if isinstance(appeal_files, list):
+        msg = None
+        for file in appeal_files:
+            appeal_text = file.get("text")
+            appeal_file_id = file.get("file_id")
+            if appeal_file_id:
+                appeal_file_type = file.get("file_type")
+                if appeal_file_type == "photo":
+                    msg = await callback.message.answer_photo(photo=appeal_file_id, caption=appeal_text)
+                elif appeal_file_type == "video":
+                    msg = await callback.message.answer_video(video=appeal_file_id, caption=appeal_text)
+                elif appeal_file_type == "document":
+                    msg = await callback.message.answer_document(document=appeal_file_id, caption=appeal_text)
+                else:
+                    await callback.message.answer(text="<b>Неверный тип сообщения!\nПопробуйте ещё раз.</b>")
+                    return
+            else:
+                msg = await callback.message.answer(text=appeal_text, reply_markup=markup)
 
-        text.append("\n<b>Пришлите ответ на обращение одним сообщением!</b>")
-        appeal_file_type = current_appeal.get("file_type")
-        if appeal_file_type == "photo":
-            msg = await callback.message.answer_photo(photo=appeal_file_id, caption='\n'.join(text),
-                                                      reply_markup=markup)
-        elif appeal_file_type == "video":
-            msg = await callback.message.answer_video(video=appeal_file_id, caption='\n'.join(text),
-                                                      reply_markup=markup)
-        elif appeal_file_type == "document":
-            msg = await callback.message.answer_document(document=appeal_file_id, caption='\n'.join(text),
-                                                         reply_markup=markup)
-        else:
-            await callback.message.answer(text="<b>Неверный тип сообщения!\nПопробуйте ещё раз.</b>")
-            return
+            add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
     else:
-        msg = await callback.message.answer(text='\n'.join(text), reply_markup=markup)
+        return
+
+    msg = await callback.message.answer(text='\n'.join(text), reply_markup=markup)
+    add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
 
     temp_appeals[callback.from_user.id] = {"user_id": current_uid, "appeal_id": str(current_appeal.get('id'))}
-    add_msg_to_delete(user_id=callback.from_user.id, msg_id=msg.message_id)
     await AnswerAppeal.Answer.set()
 
 
@@ -84,36 +87,38 @@ async def back_to_panel(callback: types.CallbackQuery):
     logger.info(f"Handler called. {back_to_panel.__name__}. user_id={callback.from_user.id}")
     await callback.answer()
 
-    return await cmd_panel(callback.message)
+    return await cmd_panel(callback)
 
 
 async def appeal_answer(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
     logger.info(f"Handler called. {appeal_answer.__name__}. user_id={message.from_user.id}")
 
-    msg_text = message.text.strip()
-    if msg_text.startswith("/"):
-        if msg_text == "/start":
-            await state.reset_state()
-            return await cmd_start(message)
-        elif msg_text == "/records":
-            await state.reset_state()
-            return await show_records(message)
-        elif msg_text == "/panel":
-            if str(message.from_user.id) in Config.ADMINS:
+    if isinstance(message, types.Message) and message.content_type == types.ContentType.TEXT:
+        msg_text = message.text.strip()
+
+        if msg_text.startswith("/"):
+            if msg_text == "/start":
                 await state.reset_state()
-                return await cmd_panel(message)
-        elif msg_text == "/filling":
-            await state.reset_state()
-            return await start_filling(message)
-        elif msg_text == "common_questions":
-            await state.reset_state()
-            return await show_questions(message)
-        elif msg_text == "/contacts":
-            await state.reset_state()
-            return await show_contacts(message=message)
-        elif msg_text == "/appeals":
-            await state.reset_state()
-            return await show_user_appeals(message=message)
+                return await cmd_start(message)
+            elif msg_text == "/records":
+                await state.reset_state()
+                return await show_records(message)
+            elif msg_text == "/panel":
+                if str(message.from_user.id) in Config.ADMINS:
+                    await state.reset_state()
+                    return await cmd_panel(message)
+            elif msg_text == "/filling":
+                await state.reset_state()
+                return await start_filling(message)
+            elif msg_text == "/common_questions":
+                await state.reset_state()
+                return await show_questions(message)
+            elif msg_text == "/contacts":
+                await state.reset_state()
+                return await show_contacts(message=message)
+            elif msg_text == "/appeals":
+                await state.reset_state()
+                return await show_user_appeals(message=message)
 
     temp_appeal = temp_appeals.get(message.from_user.id)
     appeal_user_id = temp_appeal.get("user_id")
@@ -122,6 +127,7 @@ async def appeal_answer(message: Union[types.Message, types.CallbackQuery], stat
     if isinstance(message, types.CallbackQuery):
         if message.data == "back_from_appeal":
             await state.reset_state()
+            await delete_messages(message.from_user.id)
             return await back_to_panel(message)
         elif message.data == "delete_appeal":
             await delete_messages(user_id=message.from_user.id)
@@ -130,31 +136,46 @@ async def appeal_answer(message: Union[types.Message, types.CallbackQuery], stat
             add_msg_to_delete(user_id=message.from_user.id, msg_id=msg.message_id)
             await AnswerAppeal.Confirm.set()
             return
+        elif message.data == "continue_appeals":
+            bot = Bot.get_current()
+            data = await state.get_data()
+            answer_files = data.get("files")
+            text = f"<b>Администратор ответил на ваше обращение №{appeal_id}:</b>"
+            await bot.send_message(chat_id=appeal_user_id, text=text)
+            for file in answer_files:
+                file_text = file.get("text")
+                file_id = file.get("file_id")
+                if file_id:
+                    file_type = file.get("file_type")
+                    if file_type == "photo":
+                        await bot.send_photo(chat_id=appeal_user_id, photo=file_id, caption=file_text)
+                    elif file_type == "video":
+                        await bot.send_video(chat_id=appeal_user_id, video=file_id, caption=file_text)
+                    elif file_type == "document":
+                        await bot.send_document(chat_id=appeal_user_id, document=file_id, caption=file_text)
+                else:
+                    await bot.send_message(chat_id=appeal_user_id, text=file_text)
 
-    text = [f"<b>Администратор ответил на ваше обращение №{appeal_id}:</b>\n"]
+            appeals[str(appeal_user_id)].pop(0)
+            if len(appeals[str(appeal_user_id)]) == 0:
+                appeals.pop(str(appeal_user_id))
+
+            await delete_messages(message.from_user.id)
+
+            text = f"<b>Вы отправили ответ на обращение {appeal_id}!</b>"
+            msg = await message.message.answer(text=text, reply_markup=appeals_inline(continue_=True))
+            add_msg_to_delete(user_id=message.from_user.id, msg_id=msg.message_id)
+            await state.reset_state()
+            return
+
     if message.content_type == types.ContentType.TEXT:
-        if message.text:
-            text.append(message.text)
-
-        await Bot.get_current().send_message(chat_id=int(appeal_user_id), text='\n'.join(text))
+        file_dict = {"text": message.text}
     elif message.content_type == types.ContentType.DOCUMENT:
-        if message.caption:
-            text.append(message.caption)
-
-        await Bot.get_current().send_document(chat_id=int(appeal_user_id), document=message.document.file_id,
-                                              caption='\n'.join(text))
+        file_dict = {"text": message.caption, "file_id": message.document.file_id, "file_type": "document"}
     elif message.content_type == types.ContentType.PHOTO:
-        if message.caption:
-            text.append(message.caption)
-
-        await Bot.get_current().send_photo(chat_id=int(appeal_user_id), photo=message.photo[-1].file_id,
-                                           caption='\n'.join(text))
+        file_dict = {"text": message.caption, "file_id": message.photo[-1].file_id, "file_type": "photo"}
     elif message.content_type == types.ContentType.VIDEO:
-        if message.caption:
-            text.append(message.caption)
-
-        await Bot.get_current().send_video(chat_id=int(appeal_user_id), video=message.video.file_id,
-                                           caption='\n'.join(text))
+        file_dict = {"text": message.caption, "file_id": message.video.file_id, "file_type": "video"}
     else:
         await message.answer("<b>Вы прислали неверный тип сообщения!\bПопробуйте ещё раз</b>")
         return
@@ -179,14 +200,16 @@ async def appeal_answer(message: Union[types.Message, types.CallbackQuery], stat
             await state.reset_state()
             return await message.answer(text=text_error_answer, reply_markup=appeals_inline(continue_=True))
 
-    appeals[str(appeal_user_id)].pop(0)
-    if len(appeals[str(appeal_user_id)]) == 0:
-        appeals.pop(str(appeal_user_id))
+    data = await state.get_data()
+    if "files" in data:
+        data["files"].append(file_dict)
+        await state.update_data(files=data['files'])
+    else:
+        await state.update_data(files=[file_dict])
 
-    msg = await message.answer(f"<b>Вы отправили ответ на обращение №{appeal_id}!</b>",
+    msg = await message.answer(f"<b>Материал сохранен! Добавьте ещё либо нажмите  №{appeal_id}!</b>",
                                reply_markup=appeals_inline(continue_=True))
     add_msg_to_delete(user_id=message.from_user.id, msg_id=msg.message_id)
-    await state.reset_state()
 
 
 async def remove_appeal(callback: types.CallbackQuery, state: FSMContext, callback_data: dict):
@@ -206,13 +229,10 @@ async def remove_appeal(callback: types.CallbackQuery, state: FSMContext, callba
         flag = False
         user_appeals: List[dict] = appeals.get(str(appeal_user_id))
         if not user_appeals:
-            print(2222222)
             flag = True
 
         if not flag:
-            print(f"user_appeals = {user_appeals}")
             for appeal, counter in zip(user_appeals, range(len(user_appeals))):
-                print(f"id = {appeal.get('id')}")
                 if str(appeal.get("id")) == str(appeal_id):
                     appeals[str(appeal_user_id)].pop(counter)
                     if not len(appeals[str(appeal_user_id)]):
@@ -223,6 +243,7 @@ async def remove_appeal(callback: types.CallbackQuery, state: FSMContext, callba
 
                 flag = True
 
+        await delete_messages(callback.from_user.id)
         if flag:
             msg = await callback.message.answer(
                 text=f"<b>Обращение №{appeal_id} было удалено!</b>",

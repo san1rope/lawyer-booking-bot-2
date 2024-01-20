@@ -98,8 +98,7 @@ async def show_userdata(message: Union[types.Message, types.CallbackQuery], stat
 
         for i in all_records[str(msg_text)]:
             current_record = all_records[str(msg_text)][i]
-            msg = await send_record(title=f"Запис {i}", record=current_record, uid=uid)
-            add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+            await send_record(title=f"Запис {i}", record=current_record, uid=uid)
     elif name == "ban_user":
         if msg_text in black_list:
             msg_wrong_id = await message.answer("<b>Данный пользователь уже заблокован.</b>", reply_markup=markup)

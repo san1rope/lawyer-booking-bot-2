@@ -11,7 +11,7 @@ from tg_bot.keyboards.inline.admin_keyb import work_schedule_calendar, work_sche
     back_to_time_selection
 from tg_bot.keyboards.inline.callback_data import calendar_callback as cc, time_callback as tcb, temp_callback as tc
 from tg_bot.misc.data_handling import all_records, timeline, amount_time_per_service
-from tg_bot.misc.utils import add_msg_to_delete, send_record
+from tg_bot.misc.utils import add_msg_to_delete, send_record, delete_messages
 
 t_year, t_month, t_day = {}, {}, {}
 temp_calldata = {}
@@ -55,9 +55,12 @@ async def selected_date(callback: types.CallbackQuery, callback_data: dict):
     elif arg2 == "unclick":
         return
     elif arg1 == "day":
+        await delete_messages(uid)
+
         temp_calldata[uid] = callback_data
-        await callback.message.edit_text(text="<b>Выберите время для взаимодейтвия</b>",
-                                         reply_markup=work_schedule_time(int(arg4), int(arg3), int(arg2)))
+        msg = await callback.message.answer(text="<b>Выберите время для взаимодейтвия</b>",
+                                            reply_markup=work_schedule_time(int(arg4), int(arg3), int(arg2)))
+        add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
         return
     elif arg1 == "move":
         if uid not in t_year:
@@ -104,13 +107,15 @@ async def selected_time(callback: types.CallbackQuery, callback_data: dict):
         return
 
     if hour == "show_record":
+        await delete_messages(uid)
+
         userdata = minute.split("_")
         record_uid, record_number = userdata[0], userdata[1]
 
         current_record = all_records[record_uid][record_number]
         text = f"Запись {record_number} пользователя с \nID: {record_uid}"
         return await send_record(title=text, reply_markup=back_inline("back_from_record"), uid=uid,
-                                 record=current_record, edit=callback.message)
+                                 record=current_record)
 
     if hour == "all_day":
         return await callback.message.edit_text("<b>Вы хотите занять день полностью?</b>",
@@ -133,7 +138,7 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
     if name == "all_day":
         for tm in timeline:
             record = {"service": "Выходной", "date": f"{day}.{month}.{year}",
-                      "time": tm, "number": "admin", "name": "admin", "text": "admin"}
+                      "time": tm, "number": "admin", "name": "admin", "further_info": []}
             if "weekend" not in all_records:
                 all_records["weekend"] = {"1": record}
             else:
@@ -149,14 +154,8 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
         temp_text = "день"
     else:
         time = name.split('_')
-        record = {
-            "service": "Выходной",
-            "date": f"{day}.{month}.{year}",
-            "time": f"{time[0]}:{time[1]}",
-            "number": "admin",
-            "name": "admin",
-            "text": "admin"
-        }
+        record = {"service": "Выходной", "date": f"{day}.{month}.{year}", "time": f"{time[0]}:{time[1]}",
+                  "number": "admin", "name": "admin", "further_info": []}
 
         if "weekend" not in all_records:
             all_records["weekend"] = {"1": record}

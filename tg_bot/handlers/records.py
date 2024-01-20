@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import ChatTypeFilter, Command, Text
 
 from tg_bot.keyboards.inline.remove_keyb import remove_inline
 from tg_bot.misc.data_handling import all_records, bot_commands
-from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
+from tg_bot.misc.utils import delete_messages, send_record
 
 
 async def show_records(message: types.Message):
@@ -19,8 +19,7 @@ async def show_records(message: types.Message):
         current_record = all_records[str(uid)][i]
         text = f"Запись {i}"
         markup = remove_inline(f"record_{uid}_{i}", "Удалить")
-        msg = await send_record(title=text, reply_markup=markup, uid=uid, record=current_record)
-        add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+        await send_record(title=text, reply_markup=markup, uid=uid, record=current_record)
 
 
 def register_records(dp: Dispatcher):

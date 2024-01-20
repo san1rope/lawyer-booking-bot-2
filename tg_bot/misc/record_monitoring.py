@@ -37,7 +37,8 @@ async def record_monitor(first_start: bool = False):
                                         if "Вихідний" not in all_records[user_id][i].get("service"):
                                             current_record = all_records[user_id][i]
                                             text = "Подошло время вашей записи.\nЗапись будет удалена автоматически."
-                                            await send_record(title=text, uid=user_id, record=current_record)
+                                            await send_record(title=text, uid=user_id, record=current_record,
+                                                              delete=False)
 
                                         remove_record(user_id, record_index=i)
 
@@ -65,7 +66,8 @@ async def record_monitor(first_start: bool = False):
                                             current_record = all_records[user_id][i]
                                             temp = str(record_time_delta - current_time_delta).split(':')
                                             text = f"Через {temp[0]}:{temp[1]} у вас консультация."
-                                            await send_record(title=text, record=current_record, uid=user_id)
+                                            await send_record(title=text, record=current_record, uid=user_id,
+                                                              delete=False)
 
                                             reminder[user_id].pop(str(i))
                                             if len(reminder[user_id]) == 0:

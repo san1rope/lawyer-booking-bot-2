@@ -25,7 +25,7 @@ async def show_category_data(callback: types.CallbackQuery, callback_data: dict)
         category = categories[int(category)]
         subcategory = subcategories[category][int(subcategory)]
         body = questions[category][subcategory]
-        await callback.message.edit_text(text=f"<b>{category}</b>\n\n<i>{subcategory}<i>\n\n" + '\n'.join(body),
+        await callback.message.edit_text(text=f"<b>{category}</b>\n\n<i>{subcategory}</i>\n\n" + '\n'.join(body),
                                          reply_markup=questions_keyboard())
     elif category != "no":
         category = categories[int(category)]

@@ -1,10 +1,8 @@
-import types
 from datetime import timedelta
 from typing import Optional, Union
 
 from aiogram import Bot
-from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove, ParseMode
+from aiogram.types import Message, ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.utils.exceptions import MessageToDeleteNotFound, MessageCantBeDeleted
 from aiogram.utils.markdown import hcode
 
@@ -19,9 +17,8 @@ def form_completion(title: str, end: str = '', record_data: Optional[dict] = Non
         time = record_data.get("time")
         number = record_data.get("number")
         name = record_data.get("name")
-        text = record_data.get("text")
     else:
-        service, date, time, number, name, text = None, None, None, None, None, None
+        service, date, time, number, name = None, None, None, None, None
 
     r_text = [
         f"<b>{title}</b>",
@@ -33,9 +30,6 @@ def form_completion(title: str, end: str = '', record_data: Optional[dict] = Non
     ]
     if record_data and record_data.get("messenger"):
         r_text.insert(2, f"{hcode('Месенджер:')} {record_data.get('messenger')}")
-
-    if text:
-        r_text.append(f"{hcode('Текст: ')} {text}")
 
     r_text.append(end)
 
@@ -55,7 +49,6 @@ async def delete_messages(user_id: Optional[int] = None):
             for uid in msg_to_delete:
                 for msg_id in msg_to_delete.get(uid):
                     try:
-                        print(2)
                         await Bot.get_current().delete_message(chat_id=uid, message_id=msg_id)
                     except (MessageToDeleteNotFound, MessageCantBeDeleted):
                         continue
@@ -107,28 +100,41 @@ def remove_record(user_id: str, record_index: str):
             reminder.pop(user_id)
 
 
-async def send_record(title: str, record: dict, uid: str, end: str = '', edit: Message = None,
-                      reply_markup: Union[
-                          ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove] = None) -> Message:
-    text = form_completion(title=title, end=end, record_data=record)
-    file_id = record.get("file_id")
-    if file_id:
-        file_type = record.get("file_type")
+async def send_record(title: str, record: dict, uid: str, end: str = '', edit: Message = None, delete: bool = True,
+                      reply_markup: Union[ReplyKeyboardMarkup, InlineKeyboardMarkup, ReplyKeyboardRemove] = None):
+    record_text = form_completion(title=title, end=end, record_data=record)
 
-        if file_type == "photo":
-            return await Config.BOT.send_photo(chat_id=uid, photo=file_id, caption=text, reply_markup=reply_markup)
-        elif file_type == "video":
-            return await Config.BOT.send_video(chat_id=uid, video=file_id, caption=text, reply_markup=reply_markup)
-        elif file_type == "document":
-            return await Config.BOT.send_document(chat_id=uid, document=file_id, caption=text,
-                                                  reply_markup=reply_markup)
-    else:
-        if edit:
-            try:
-                return await edit.edit_text(text=text, reply_markup=reply_markup,
-                                            disable_web_page_preview=True)
-            except Exception:
-                pass
+    further_info = record.get("further_info")
+    if isinstance(further_info, list):
+        for further in further_info:
+            text = further.get("text")
+            file_id = further.get("file_id")
+            msg = None
+            if file_id:
+                file_type = further.get("file_type")
+                if file_type == "photo":
+                    msg = await Config.BOT.send_photo(chat_id=uid, photo=file_id, caption=text)
+                elif file_type == "video":
+                    msg = await Config.BOT.send_video(chat_id=uid, video=file_id, caption=text)
+                elif file_type == "document":
+                    msg = await Config.BOT.send_document(chat_id=uid, document=file_id, caption=text)
+            else:
+                msg = await Config.BOT.send_message(chat_id=uid, text=text, disable_web_page_preview=True)
 
-        return await Config.BOT.send_message(chat_id=uid, text=text, reply_markup=reply_markup,
-                                             disable_web_page_preview=True)
+            if delete:
+                add_msg_to_delete(user_id=int(uid), msg_id=msg.message_id)
+
+    if edit:
+        try:
+            msg = await edit.edit_text(text=record_text, reply_markup=reply_markup, disable_web_page_preview=True)
+            if delete:
+                add_msg_to_delete(user_id=int(uid), msg_id=msg.message_id)
+
+            return
+        except Exception:
+            pass
+
+    msg = await Config.BOT.send_message(chat_id=uid, text=record_text, reply_markup=reply_markup,
+                                        disable_web_page_preview=True)
+    if delete:
+        add_msg_to_delete(user_id=int(uid), msg_id=msg.message_id)

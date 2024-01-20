@@ -19,15 +19,19 @@ services_keyboard = InlineKeyboardMarkup(
     ]
 )
 
-add_appeal_keyboard = InlineKeyboardMarkup(
-    row_width=2,
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Продолжить", callback_data=tc.new(title="add_appeal", name="continue")),
-            InlineKeyboardButton(text="Добавить", callback_data=tc.new(title="add_appeal", name="add"))
-        ],
-        [
-            InlineKeyboardButton(text="Назад", callback_data=tc.new(title="add_appeal", name="back"))
+
+def add_appeal_keyboard(add: bool = False) -> InlineKeyboardMarkup:
+    markup = InlineKeyboardMarkup(
+        row_width=2,
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Продолжить", callback_data=tc.new(title="add_appeal", name="continue")),
+                InlineKeyboardButton(text="Назад", callback_data=tc.new(title="add_appeal", name="back"))
+            ]
         ]
-    ]
-)
+    )
+
+    if add:
+        markup.row(InlineKeyboardButton(text="Добавить", callback_data=tc.new(title="add_appeal", name="add")))
+
+    return markup

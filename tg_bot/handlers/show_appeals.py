@@ -24,6 +24,21 @@ async def show_user_appeals(message: types.Message):
         return await message.answer("<b>У вас нет активных обращений!</b>")
 
     for appeal in user_appeals:
+        for file in appeal.get("files"):
+            file_text = file.get("text")
+            file_id = file.get("file_id")
+            file_type = file.get("file_type")
+            if file_type == "photo":
+                msg = await message.answer_photo(photo=file_id, caption=file_text)
+            elif file_type == "video":
+                msg = await message.answer_video(video=file_id, caption=file_text)
+            elif file_type == "document":
+                msg = await message.answer_document(document=file_id, caption=file_text)
+            else:
+                msg = await message.answer(text=file_text)
+
+            add_msg_to_delete(user_id=message.from_user.id, msg_id=msg.message_id)
+
         text = [
             f"<b>Обращение №{appeal.get('id')}</b>",
             f"<b>ID пользователя: {hcode(str(message.from_user.id))}</b>",
@@ -34,26 +49,8 @@ async def show_user_appeals(message: types.Message):
         if appeal_username:
             text.append(f"<b>Username пользователя: {hcode(appeal_username)}</b>")
 
-        file_id = appeal.get("file_id")
         markup = remove_inline(title="Удалить", title_arg="remove_appeal_user", name=str(appeal.get('id')))
-
-        msg = None
-        appeal_text = appeal.get('text')
-        if appeal_text:
-            text.append(f"\n{appeal_text}")
-
-        if file_id:
-            file_type = appeal.get("file_type")
-            if file_type == "photo":
-                msg = await message.answer_photo(photo=file_id, caption='\n'.join(text), reply_markup=markup)
-            elif file_type == "video":
-                msg = await message.answer_video(video=file_id, caption='\n'.join(text), reply_markup=markup)
-            elif file_type == "document":
-                msg = await message.answer_document(document=file_id, caption='\n'.join(text), reply_markup=markup)
-        else:
-            msg = await message.answer(text='\n'.join(text), reply_markup=markup)
-
-        add_msg_to_delete(user_id=message.from_user.id, msg_id=msg.message_id)
+        await message.answer(text='\n'.join(text), reply_markup=markup)
 
 
 async def remove_confirm_appeal_user(callback: types.CallbackQuery, callback_data: dict):
