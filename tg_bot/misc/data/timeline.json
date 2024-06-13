@@ -1,12 +1,167 @@
 ﻿{
-    "9:00": {},
-    "10:00": {},
-    "11:00": {},
-    "12:00": {},
-    "13:00": {},
-    "14:00": {},
-    "15:00": {},
-    "16:00": {},
-    "17:00": {},
-    "18:00": {}
+    "9:00": {
+        "2024": {
+            "6": {
+                "15": "weekend",
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "10": "weekend",
+                "11": "weekend",
+                "12": "weekend",
+                "13": "weekend",
+                "9": "weekend",
+                "24": "5791823682"
+            }
+        }
+    },
+    "10:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "10": "weekend",
+                "11": "weekend",
+                "12": "weekend",
+                "13": "weekend",
+                "15": "weekend",
+                "9": "weekend",
+                "24": "5791823682"
+            }
+        }
+    },
+    "11:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "10": "weekend",
+                "11": "weekend",
+                "12": "weekend",
+                "13": "weekend",
+                "15": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "12:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "10": "weekend",
+                "13": "weekend",
+                "15": "weekend",
+                "12": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "13:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "10": "weekend",
+                "13": "weekend",
+                "15": "weekend",
+                "12": "weekend",
+                "8": "weekend",
+                "9": "weekend",
+                "11": "1209001109"
+            }
+        }
+    },
+    "14:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "11": "weekend",
+                "13": "weekend",
+                "15": "weekend",
+                "12": "weekend",
+                "8": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "15:00": {
+        "2024": {
+            "6": {
+                "8": "353371268",
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "11": "weekend",
+                "15": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "16:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "11": "weekend",
+                "15": "weekend",
+                "8": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "17:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "11": "weekend",
+                "15": "weekend",
+                "8": "weekend",
+                "9": "weekend"
+            }
+        }
+    },
+    "18:00": {
+        "2024": {
+            "6": {
+                "30": "weekend",
+                "29": "weekend",
+                "24": "weekend",
+                "22": "weekend",
+                "23": "weekend",
+                "16": "weekend",
+                "11": "weekend",
+                "15": "weekend",
+                "8": "weekend",
+                "9": "weekend"
+            }
+        }
+    }
 }

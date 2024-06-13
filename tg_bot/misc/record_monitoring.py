@@ -7,7 +7,7 @@ import pytz
 from aiogram import Bot, types
 
 from tg_bot.config import Config
-from tg_bot.misc.data_handling import timeline, all_records, reminder
+from tg_bot.misc.data_handling import timeline, all_records, reminder, weekend
 from tg_bot.misc.utils import remove_record, send_record
 
 logger = logging.getLogger(__name__)
@@ -32,11 +32,14 @@ async def record_monitor(first_start: bool = False):
                             if current_time.astimezone(pytz.UTC) >= record_time.astimezone(pytz.UTC):
                                 user_id = timeline[time][year][month][day]
                                 for i in all_records[user_id]:
+                                    rtd = record_time.strftime("%d.%m.20%y").split(".")
+                                    rtd_str = f"{int(rtd[0])}.{int(rtd[1])}.{int(rtd[2])}"
                                     if all_records[user_id][i]["time"] == time and all_records[user_id][i][
-                                        "date"] == record_time.strftime("%d.%m.20%y"):
-                                        if "Вихідний" not in all_records[user_id][i].get("service"):
+                                        "date"] == rtd_str:
+                                        if weekend not in all_records[user_id][i].get("service"):
                                             current_record = all_records[user_id][i]
                                             text = "Подошло время вашей записи.\nЗапись будет удалена автоматически."
+                                            print(f"user_id = {user_id}")
                                             await send_record(title=text, uid=user_id, record=current_record,
                                                               delete=False)
 

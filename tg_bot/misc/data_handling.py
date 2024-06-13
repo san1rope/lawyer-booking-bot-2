@@ -6,12 +6,16 @@ all_records, reminder, black_list, appeals = {}, {}, {}, {"last_id": 0}
 questions: Dict[str, list] = {}
 categories, subcategories = [], {}
 
-services = {"online_consultation": "Онлайн консультация", "office_consultation": "Консультация в офисе"}
+online_consultation = "Онлайн консультация"
+office_consultation = "Консультация в офисе"
+weekend = "Выходной"
+
+services = {"online_consultation": online_consultation, "office_consultation": office_consultation}
 timeline = {"9:00": {}, "10:00": {}, "11:00": {}, "12:00": {}, "13:00": {}, "14:00": {}, "15:00": {}, "16:00": {},
             "17:00": {}, "18:00": {}}
 
-amount_time_per_service = {"Онлайн консультация": "01:00", "Консультация в офисе": "01:00", "Выходной": "01:00"}
-service_prices = {"Онлайн консультация": 800, "Консультация в офисе": 1000}
+amount_time_per_service = {online_consultation: "01:00", office_consultation: "01:00", weekend: "01:00"}
+service_prices = {online_consultation: 800, office_consultation: 1000}
 bot_commands = {
     "/start": "Старт",
     "/filling": "Записаться на консультацию",

@@ -10,7 +10,7 @@ from tg_bot.handlers.admin.panel import cmd_panel
 from tg_bot.keyboards.inline.admin_keyb import work_schedule_calendar, work_schedule_time, back_inline, confirm_weekend, \
     back_to_time_selection
 from tg_bot.keyboards.inline.callback_data import calendar_callback as cc, time_callback as tcb, temp_callback as tc
-from tg_bot.misc.data_handling import all_records, timeline, amount_time_per_service
+from tg_bot.misc.data_handling import all_records, timeline, amount_time_per_service, weekend
 from tg_bot.misc.utils import add_msg_to_delete, send_record, delete_messages
 
 t_year, t_month, t_day = {}, {}, {}
@@ -137,12 +137,13 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
 
     if name == "all_day":
         for tm in timeline:
-            record = {"service": "Выходной", "date": f"{day}.{month}.{year}",
+            record = {"service": weekend, "date": f"{day}.{month}.{year}",
                       "time": tm, "number": "admin", "name": "admin", "further_info": []}
             if "weekend" not in all_records:
                 all_records["weekend"] = {"1": record}
             else:
                 all_records["weekend"].update({str(len(all_records["weekend"]) + 1): record})
+                #all_records["weekend"].update({str(list(all_records["weekend"])[-1] + 1): record})
 
             if year in timeline[tm]:
                 if month in timeline[tm][year]:
@@ -154,16 +155,17 @@ async def make_weekend(callback: types.CallbackQuery, callback_data: dict):
         temp_text = "день"
     else:
         time = name.split('_')
-        record = {"service": "Выходной", "date": f"{day}.{month}.{year}", "time": f"{time[0]}:{time[1]}",
+        record = {"service": weekend, "date": f"{day}.{month}.{year}", "time": f"{time[0]}:{time[1]}",
                   "number": "admin", "name": "admin", "further_info": []}
 
         if "weekend" not in all_records:
             all_records["weekend"] = {"1": record}
         else:
             all_records["weekend"].update({str(len(all_records["weekend"]) + 1): record})
+            #all_records["weekend"].update({str(list(all_records["weekend"])[-1] + 1): record})
 
         time_start = timedelta(hours=int(time[0]), minutes=int(time[1]))
-        amount_time = amount_time_per_service["Выходной"].split(':')
+        amount_time = amount_time_per_service[weekend].split(':')
         will_take_time_ = timedelta(hours=int(amount_time[0]), minutes=int(amount_time[1]))
         time_end = time_start + will_take_time_
         while time_start != time_end:

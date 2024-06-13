@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.markdown import hcode
 
+from tg_bot.misc.data_handling import online_consultation, office_consultation
 from tg_bot.misc.utils import add_msg_to_delete
 
 
@@ -11,9 +12,9 @@ async def show_price(callback: types.CallbackQuery):
 
     text = [
         "<b>Прайс 📋</b>",
-        f"\nУслуга - <b>Онлайн консультация</b>",
+        f"\nУслуга - <b>{online_consultation}</b>",
         f"Стоимость: {hcode('800')} грн.\nВремя: 40 мин.",
-        f"\nУслуга - <b>Консультация в офисе</b>",
+        f"\nУслуга - <b>{office_consultation}</b>",
         f"Стоимость: {hcode('1000')} грн.\nВремя: 40 мин."
     ]
     markup = InlineKeyboardMarkup(row_width=1,

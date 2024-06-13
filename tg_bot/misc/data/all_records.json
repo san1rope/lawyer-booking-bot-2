@@ -1,1 +1,861 @@
-﻿{}
+﻿{
+    "353371268": {
+        "1": {
+            "service": "Онлайн консультация",
+            "messenger": "Telegram",
+            "date": "8.6.2024",
+            "time": "15:00",
+            "number": "+380671400919",
+            "name": "Виктория"
+        }
+    },
+    "weekend": {
+        "1": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "2": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "3": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "4": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "5": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "6": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "7": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "8": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "9": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "10": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "11": {
+            "service": "Выходной",
+            "date": "30.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "12": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "13": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "14": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "15": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "16": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "17": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "18": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "19": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "20": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "21": {
+            "service": "Выходной",
+            "date": "29.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "22": {
+            "service": "Выходной",
+            "date": "24.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "23": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "24": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "25": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "26": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "27": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "28": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "29": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "30": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "31": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "32": {
+            "service": "Выходной",
+            "date": "22.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "33": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "34": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "35": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "36": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "37": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "38": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "39": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "40": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "41": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "42": {
+            "service": "Выходной",
+            "date": "23.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "43": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "44": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "45": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "46": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "47": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "48": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "49": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "50": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "51": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "52": {
+            "service": "Выходной",
+            "date": "16.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "53": {
+            "service": "Выходной",
+            "date": "10.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "54": {
+            "service": "Выходной",
+            "date": "10.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "55": {
+            "service": "Выходной",
+            "date": "10.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "56": {
+            "service": "Выходной",
+            "date": "10.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "57": {
+            "service": "Выходной",
+            "date": "10.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "58": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "59": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "60": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "61": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "62": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "63": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "64": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "65": {
+            "service": "Выходной",
+            "date": "11.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "66": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "67": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "68": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "69": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "70": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "71": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "72": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "73": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "74": {
+            "service": "Выходной",
+            "date": "13.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "75": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "76": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "77": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "78": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "79": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "80": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "81": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "82": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "83": {
+            "service": "Выходной",
+            "date": "15.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "84": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "85": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "86": {
+            "service": "Выходной",
+            "date": "12.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "87": {
+            "service": "Выходной",
+            "date": "8.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "88": {
+            "service": "Выходной",
+            "date": "8.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "89": {
+            "service": "Выходной",
+            "date": "8.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "90": {
+            "service": "Выходной",
+            "date": "8.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "91": {
+            "service": "Выходной",
+            "date": "8.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "92": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "9:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "93": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "10:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "94": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "11:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "95": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "12:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "96": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "13:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "97": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "14:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "98": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "15:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "99": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "16:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "100": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "17:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        },
+        "101": {
+            "service": "Выходной",
+            "date": "9.6.2024",
+            "time": "18:00",
+            "number": "admin",
+            "name": "admin",
+            "further_info": []
+        }
+    },
+    "1209001109": {
+        "1": {
+            "service": "Онлайн консультация",
+            "messenger": "Telegram",
+            "date": "11.6.2024",
+            "time": "13:00",
+            "number": "+380939763358",
+            "name": "Поль"
+        }
+    },
+    "5791823682": {
+        "1": {
+            "service": "Онлайн консультация",
+            "messenger": "Telegram",
+            "date": "24.6.2024",
+            "time": "9:00",
+            "number": "+380987776655",
+            "name": "Тестове",
+            "further_info": [
+                {
+                    "text": "Тестове повідомлення"
+                }
+            ]
+        },
+        "2": {
+            "service": "Консультация в офисе",
+            "date": "24.6.2024",
+            "time": "10:00",
+            "number": "+380998887766",
+            "name": "Тест",
+            "further_info": [
+                {
+                    "text": "Тест",
+                    "file_id": "AgACAgIAAxkBAAId5WZmqYEphqJu1I8rtLMu8DRsAtRuAAJ53jEbAkk5S22HZim32y4XAQADAgADcwADNQQ",
+                    "file_type": "photo"
+                }
+            ]
+        }
+    }
+}

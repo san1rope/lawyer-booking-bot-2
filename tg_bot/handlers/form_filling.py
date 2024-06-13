@@ -25,7 +25,7 @@ from tg_bot.keyboards.inline.paid_keyb import paid_keyboard
 from tg_bot.keyboards.inline.services_keyb import services_keyboard, add_appeal_keyboard
 from tg_bot.keyboards.inline.time_keyb import time_keyboard
 from tg_bot.misc.data_handling import services, service_prices, all_records, amount_time_per_service, timeline, \
-    reminder, appeals, bot_commands
+    reminder, appeals, bot_commands, online_consultation
 from tg_bot.misc.states import ProvideContacts, SendAppeal, AddAppealToRecord
 from tg_bot.misc.utils import delete_messages, add_msg_to_delete, send_record
 
@@ -124,7 +124,7 @@ async def appeal_payment(message: Union[types.Message, types.CallbackQuery], sta
         elif name == "continue":
             await delete_messages(uid)
 
-            text = f"\n\n<b>К оплате {hcode(service_prices.get('Онлайн консультация'))} грн.</b>"
+            text = f"\n\n<b>К оплате {hcode(service_prices.get(online_consultation))} грн.</b>"
             msg = await message.message.answer(text=text, reply_markup=payment_keyboard)
             add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
 
@@ -461,7 +461,7 @@ async def write_name(message: Union[types.Message, types.CallbackQuery], state: 
 
     temp_records[uid].pop("further_info", None)
 
-    text = "<b>Желаете прикрепить дополнительные материалы?\nЕсли такой необходимости нет, жми - Продолжить</b>"
+    text = "<b>Чтобы повысить еффективность консультацыи добавьте документы или цель обращения 👇</b>"
     try:
         msg = await message.edit_text(text=text, reply_markup=add_appeal_keyboard(add=True))
     except MessageToEditNotFound:
@@ -497,7 +497,7 @@ async def payment_record(message: Union[types.CallbackQuery, types.Message], cal
 
         return
     elif name == "add":
-        text = "<b>Пришлите дополнительную информацию\nВыберите файл 📎 и в описании к нему ✍🏼 изложите свой вопрос.</b>"
+        text = "<b>Выберите файл документа 📎 и в описании к нему ✍🏼 изложите свой вопрос. Если документов нет, просто напишите вопрос.</b>"
         await message.edit_text(text=text, reply_markup=add_appeal_keyboard(add=False))
 
         await AddAppealToRecord.File.set()
@@ -559,14 +559,27 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
         return await write_name(message=callback)
 
     # Сохраняю запись в словарь, который в on_shutdown выгружу в json
+    record_id = None
     if str(uid) not in all_records:
-        all_records[str(uid)] = {"1": temp_records[uid]}
+        record_id = "1"
+        all_records[str(uid)] = {record_id: temp_records[uid]}
     elif len(all_records[str(uid)]) >= Config.MAX_RECORDS_PER_USER:
         await callback.message.edit_text(
             text=f"<b>Запись не сохранена!\nУ вас уже есть активных записей: {Config.MAX_RECORDS_PER_USER}</b>")
         return
     else:
-        all_records[str(uid)].update({str(len(all_records[str(uid)]) + 1): temp_records[uid]})
+        if str(uid) in all_records and all_records[str(uid)]:
+            # Отримання найбільшого ключа і додавання 1
+            max_key = max(int(k) for k in all_records[str(uid)].keys())
+            record_id = str(max_key + 1)
+        else:
+            # Якщо записів немає, починаємо з "1"
+            record_id = "1"
+
+        all_records[str(uid)].update({record_id: temp_records[uid]})
+    # else:
+    #     record_id = str(list(all_records[str(uid)])[-1] + 1)
+    #     all_records[str(uid)].update({record_id: temp_records[uid]})
 
     # Занимаю временной промежуток записи в словарь, который в on_shutdown выгружу в json
     date_split = temp_records[uid]["date"].split('.')
@@ -597,9 +610,9 @@ async def save_record(callback: types.CallbackQuery, callback_data: dict):
         time_timedelta += timedelta(hours=1)
 
     if str(uid) not in reminder:
-        reminder[str(uid)] = {str(len(all_records[str(uid)])): temp_records[uid].get("time")}
+        reminder[str(uid)] = {record_id: temp_records[uid].get("time")}
     else:
-        reminder[str(uid)].update({str(len(all_records[str(uid)])): temp_records[uid].get("time")})
+        reminder[str(uid)].update({record_id: temp_records[uid].get("time")})
 
     for adm in Config.ADMINS:
         if adm != uid:
